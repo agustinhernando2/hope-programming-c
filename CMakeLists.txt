@@ -26,11 +26,40 @@ include_directories(include)
 # See: https://cmake.org/cmake/help/latest/command/file.html#glob
 #file(GLOB_RECURSE SOURCES "src/*.c")
 
+# To automatically download the dependencies we can use FetchContent
+# See: https://cmake.org/cmake/help/latest/module/FetchContent.html
+include(FetchContent)
+
+# We are going to use cJSON to send messages between server and client
+set(CJSON_GIT_URL "https://github.com/DaveGamble/cJSON.git")
+
+# In this example we are going to use Unity to download and to test our project
+set(UNITY_GIT_URL "https://github.com/ThrowTheSwitch/Unity.git")
+
+# Enable debug
+set(FETCHCONTENT_QUIET OFF)
+
+FetchContent_Declare(
+  Unity
+  GIT_REPOSITORY ${UNITY_GIT_URL}
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/unity
+  UPDATE_COMMAND ""
+)
+
+FetchContent_Declare(
+  cJSON
+  GIT_REPOSITORY ${CJSON_GIT_URL}
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/cJSON
+  UPDATE_COMMAND ""
+)
+
+# Ensures the named dependencies have been populated, either by an earlier call or by populating them now.
+FetchContent_MakeAvailable(Unity cJSON)
+
 # Create the executable
 # See https://cmake.org/cmake/help/latest/command/add_executable.html
 add_executable(server src/server.c)
-add_executable(client_A src/client_A.c)
-add_executable(client_B src/client_B.c)
+add_executable(client_monitor src/client_monitor.c)
 
 # Compile the libraries
 # See: https://cmake.org/cmake/help/latest/command/add_subdirectory.html
@@ -46,26 +75,6 @@ target_include_directories(server PUBLIC lib/libsta/include)
 # See: https://cmake.org/cmake/help/latest/command/target_link_libraries.html
 target_link_libraries(server StatiCLib DynamiCLib) 
 
-# To automatically download the dependencies we can use FetchContent
-# See: https://cmake.org/cmake/help/latest/module/FetchContent.html
-include(FetchContent)
-
-# In this example we are going to use Unity to download and to test our project
-set(UNITY_GIT_URL "https://github.com/ThrowTheSwitch/Unity.git")
-
-# Enable debug
-set(FETCHCONTENT_QUIET OFF)
-
-FetchContent_Declare(
-  Unity
-  GIT_REPOSITORY ${UNITY_GIT_URL}
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/unity
-  UPDATE_COMMAND ""
-)
-
-# Ensures the named dependencies have been populated, either by an earlier call or by populating them now.
-FetchContent_MakeAvailable(Unity)
-
 # Add subdirectory for the tests
 if(RUN_TESTS EQUAL 1 OR RUN_COVERAGE EQUAL 1)
   add_subdirectory(tests)
@@ -79,8 +88,7 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Target clear
 add_custom_target(clear
     COMMAND rm -f ${CMAKE_BINARY_DIR}/server
-    COMMAND rm -f ${CMAKE_BINARY_DIR}/client_A
-    COMMAND rm -f ${CMAKE_BINARY_DIR}/client_B
+    COMMAND rm -f ${CMAKE_BINARY_DIR}/client_monitor
             ...
     COMMENT "clear"
 )

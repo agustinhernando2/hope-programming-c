@@ -12,7 +12,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 file(GLOB TESTS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/unit/*.c)
 
 # Files to test
-file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/logic.c)
+file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/*.c)
+
+# static lib files to test
+file(GLOB LIB_E_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/libdyn/src/*.c)
+
+# dynamic lib files to test
+file(GLOB LIB_D_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/*.c)
 
 # Link with Unity header
 target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/Unity/src)
@@ -40,7 +46,7 @@ if(RUN_COVERAGE)
     endif()
 
 # Create test executable
-add_executable(test_${PROJECT_NAME} ${TESTS_FILES} ${SRC_FILES})
+add_executable(test_${PROJECT_NAME} ${TESTS_FILES} ${SRC_FILES} ${LIB_D_SRC_FILES} ${LIB_E_SRC_FILES})
 
 # Link with Unity
 target_link_libraries(test_${PROJECT_NAME} unity)

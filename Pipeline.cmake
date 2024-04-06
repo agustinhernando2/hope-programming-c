@@ -1,6 +1,6 @@
 # Environment configuration
 
-set(CTEST_PROJECT_NAME "UNC-SOII") #Change here and insert the correct project name.
+set(CTEST_PROJECT_NAME "monitoring-application") #Change here and insert the correct project name.
 set(CTEST_SUBMIT_URL 
     "http://localhost:8080/submit.php?project=${CTEST_PROJECT_NAME}")
 set(CTEST_USE_LAUNCHERS YES)
