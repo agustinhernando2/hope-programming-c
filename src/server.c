@@ -1,40 +1,33 @@
 #include "server.h"
-#include <stdio.h>
-
-#include <emergency_handler.h>
-#include <critical_handler.h>
-#include <server_req_handler.h>
-#include <cjson_handler.h>
-
-//#include <cJSON.h>
 
 int main(int argc, char const *argv[])
 {
+    signal(SIGINT, handler);
+    signal(SIGTERM, handler);
+
     printf("Hello, World \n");
 
 
-
-
-    printf("Calling shared lib from main program. I get '%d'.\n", shared_lib_function("Hello, OS II"));
-    printf("Calling static lib from main program. I get '%d'.\n", static_lib_function("Bye, OS II"));
-    printf("Calling static lib from main program. I get '%d'.\n", static_lib_function_("Bye2, OS II"));
-    printf("Calling static lib from main program. I get '%d'.\n", cjson_handler_lib_function("Hello CJSON"));
-
-
-    cJSON *jsonMessage = cJSON_CreateObject();
-    char *string = NULL;
-
-    cjson_add_key_value_to_object(jsonMessage, "MESSAGE", "buffer1");
-
-    string = cJSON_Print(jsonMessage);
-    printf("%s\n\n", string);
-    cJSON_Delete(jsonMessage);
-    if (string == NULL)
-    {
-        perror("Failed 2.");
-    }
+    memset(socket_buffer, 0, BUFFER_SIZE);
+    cjson_add_key_value_to_json_string(socket_buffer,"clave1","value");
+    cjson_add_key_value_to_json_string(socket_buffer,"clave2","value");
+    cjson_add_key_value_to_json_string(socket_buffer,"clave3","value");
+    cjson_add_key_value_to_json_string(socket_buffer,"clave4","value");
+    cjson_add_key_value_to_json_string(socket_buffer,"clave5","value");
+    print_cjson(socket_buffer);
 
     return 0;
 }
 
 
+static void handler()
+{
+    if(flag_handler){
+        close(sockfd);
+        exit(EXIT_SUCCESS);
+    }
+    flag_handler = 1;
+    printf("\
+    The server is not accepting any more connections.\
+    \nLas mensajes que reciba ahora retornan fin y cierran los clientes.\n");
+}

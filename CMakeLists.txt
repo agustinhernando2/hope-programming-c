@@ -65,23 +65,27 @@ add_executable(client_monitor src/client_monitor.c)
 # See: https://cmake.org/cmake/help/latest/command/add_subdirectory.html
 add_subdirectory(lib/libdyn)
 add_subdirectory(lib/libsta)
-add_subdirectory(lib/libcjsonhandler)
-add_subdirectory(lib/libcjson)
+
+add_library(cJSON STATIC external/cJSON/cJSON.c)
+target_compile_options(cJSON PRIVATE)
 
 # Include headers in lib
 # See: https://cmake.org/cmake/help/latest/command/target_include_directories.html
 target_include_directories(server PUBLIC lib/libdyn/include)
 target_include_directories(server PUBLIC lib/libsta/include)
-target_include_directories(server PUBLIC lib/libcjsonhandler/include)
 target_include_directories(server PUBLIC external/cJSON)
 
-# # Link with cJSON header
-# target_include_directories(server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/cJSON)
-# target_include_directories(client_monitor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/cJSON)
+# Compilation flags
+# set(COMMON_FLAGS "-Wall -pedantic -Werror -Wextra -Wconversion -std=gnu11")
+
+# gdb
+if(GDB EQUAL 1)
+  set(CMAKE_C_FLAGS "-g ")
+endif()
 
 # Link the libraries
 # See: https://cmake.org/cmake/help/latest/command/target_link_libraries.html
-target_link_libraries(server StatiCLib DynamiCLib cjsonHandler cJSON) 
+target_link_libraries(server StatiCLib DynamiCLib cJSON) 
 
 # Add subdirectory for the tests
 if(RUN_TESTS EQUAL 1 OR RUN_COVERAGE EQUAL 1)

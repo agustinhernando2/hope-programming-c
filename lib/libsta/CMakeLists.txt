@@ -18,17 +18,27 @@ project(
 
 set(CMAKE_C_STANDARD 17)
 
-# Include the include directory, where the header files are located
-# See: https://cmake.org/cmake/help/latest/command/include_directories.html
+# gdb
+if(GDB EQUAL 1)
+  set(CMAKE_C_FLAGS "-g ")
+endif()
 
+# Include the cJSON library
+include_directories(../../external/cJSON)
+
+# Include the include directory, where the header files are located
 include_directories(include)
 
 # Add the src directory, where the source files are located
-# See: https://cmake.org/cmake/help/latest/command/file.html#glob
+file(GLOB SOURCES "src/*.c")
 
-file(GLOB_RECURSE SOURCES "src/*.c")
+# Add cJSON source files
+file(GLOB cJSON_SOURCES "../../external/cJSON/*.c")
 
 # Create the executable
-# See https://cmake.org/cmake/help/latest/command/add_executable.html
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${cJSON_SOURCES})
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+# Link cJSON library to StatiCLib
+target_link_libraries(${PROJECT_NAME} PUBLIC cJSON)
+
+target_compile_options(${PROJECT_NAME} PUBLIC -g)
