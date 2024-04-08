@@ -19,26 +19,40 @@
 
 #define STYPE_IPV4 1
 #define STYPE_IPV6 2
-#define BUFFER_SIZE 512
+#define N_CONNECTIONS 5
+
+struct sockaddr_in serv_addr;
+uint16_t puerto;
+int status;
+
+pid_t pid;
+int active_childs = 0;
+uint8_t selected_ip_conn = 1;
+
+char socket_buffer[BUFFER_SIZE];
+
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
 volatile __uint8_t flag_handler = 0;
+
 int sockfd;
 
 char socket_buffer[BUFFER_SIZE];
 
-static void handler();
+
+void run_server();
 
 /**
- * @brief Function to run the IPv4 or IPv6 server.
+ * @brief .
  *
- * This function runs the IPv4 or IPv6 server with the provided arguments.
+ * .
  *
  * @param[in] argv Command-line arguments.
  */
-// void run_server_ipvx(char *argv[]);
+int connect_server();
 
+// void get_interface_ipv6(char* ip, char* iface)
 
-// int connect_server(int *sockfd, char *argv[], sa_family_t domain);
+static void sign_handler();
 
 

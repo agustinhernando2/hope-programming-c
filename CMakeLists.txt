@@ -59,7 +59,7 @@ FetchContent_Declare(
 # Create the executable
 # See https://cmake.org/cmake/help/latest/command/add_executable.html
 add_executable(server src/server.c)
-add_executable(client_monitor src/client_monitor.c)
+add_executable(client src/client.c)
 
 # Compile the libraries
 # See: https://cmake.org/cmake/help/latest/command/add_subdirectory.html
@@ -75,6 +75,10 @@ target_include_directories(server PUBLIC lib/libdyn/include)
 target_include_directories(server PUBLIC lib/libsta/include)
 target_include_directories(server PUBLIC external/cJSON)
 
+target_include_directories(client PUBLIC lib/libdyn/include)
+target_include_directories(client PUBLIC lib/libsta/include)
+target_include_directories(client PUBLIC external/cJSON)
+
 # Compilation flags
 # set(COMMON_FLAGS "-Wall -pedantic -Werror -Wextra -Wconversion -std=gnu11")
 
@@ -86,6 +90,7 @@ endif()
 # Link the libraries
 # See: https://cmake.org/cmake/help/latest/command/target_link_libraries.html
 target_link_libraries(server StatiCLib DynamiCLib cJSON) 
+target_link_libraries(client StatiCLib DynamiCLib cJSON) 
 
 # Add subdirectory for the tests
 if(RUN_TESTS EQUAL 1 OR RUN_COVERAGE EQUAL 1)
@@ -100,7 +105,7 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 # Target clear
 add_custom_target(clear
     COMMAND rm -f ${CMAKE_BINARY_DIR}/server
-    COMMAND rm -f ${CMAKE_BINARY_DIR}/client_monitor
+    COMMAND rm -f ${CMAKE_BINARY_DIR}/client
             ...
     COMMENT "clear"
 )

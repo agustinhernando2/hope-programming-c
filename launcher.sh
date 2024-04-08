@@ -1,13 +1,6 @@
 #!/bin/bash
+gnome-terminal --title="server-AF_INET" -- ./build/server 4495
 
-# Elimina el directorio build si existe
-rm -rf build
+sleep 1
 
-# Crea el directorio build y entra en él
-mkdir build && cd build
-
-# Configura el proyecto usando CMake con el generador Ninja
-cmake -GNinja -DGDB=1 ..
-
-# Construye el proyecto con Ninja
-ninja
+gnome-terminal --title="client-01" -- ./build/client localhost 4495
