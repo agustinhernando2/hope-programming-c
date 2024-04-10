@@ -13,7 +13,8 @@
 /build/
 
 # External directoy
-/external/
+/external/cJSON
+/external/unity
 
 # Dependency files
 *.d
@@ -26,8 +27,7 @@
 .scannerwork/
 
 # Sonar files 
-/sonarqube_data/
-/sonarqube_extensions/
-/sonarqube_logs/
-/postgresql_data/
 qa_local.sh
+CDashSummary.log
+docker-compose.yaml
+postgresql_data/postgresql/pgdata/

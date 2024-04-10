@@ -35,12 +35,11 @@ char socket_buffer[BUFFER_SIZE];
    possibility of a signal arriving in the middle of the operation.  */
 volatile __uint8_t flag_handler = 0;
 
-int sockfd;
 
 char socket_buffer[BUFFER_SIZE];
 
 
-void run_server();
+void run_server(uint8_t ipv4);
 
 /**
  * @brief .
@@ -49,7 +48,16 @@ void run_server();
  *
  * @param[in] argv Command-line arguments.
  */
-int connect_server();
+int connect_server(int sockfd, uint8_t ipv4);
+
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
+int connect_server_ipv6();
 
 // void get_interface_ipv6(char* ip, char* iface)
 

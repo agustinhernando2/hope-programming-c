@@ -20,6 +20,14 @@ struct sockaddr_in serv_addr;
 struct hostent *server;
 int sockfd;
 
+#define MAX_USERNAME_LENGTH 50
+#define MAX_PASSWORD_LENGTH 50
+#define K_HOSTNAME "hostname"
+#define K_PASSWORD "password"
+
+char username[MAX_USERNAME_LENGTH];
+char password[MAX_PASSWORD_LENGTH];
+
 /**
  * @brief .
  *
@@ -28,3 +36,5 @@ int sockfd;
  * @param[in] argv Command-line arguments.
  */
 int try_connect_server();
+
+int check_credentials();

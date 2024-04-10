@@ -14,25 +14,24 @@
 #define MESSAGE "message"
 #define END "end"
 #define TRUE 1
-// char socket_buffer[BUFFER_SIZE];
 
-// /**
-//  * @brief - send a message
-//  * If the message is too long so It'll be sending by parts
-//  * @param json_buffer: JSON character buffer.
-//  * @param sockfd: socket file descriptor.
-//  * @return 0 success, 1 if an error occurs.
-//  */
-// int send_message(char* json_buffer, int sockfd);
+/**
+ * @brief - send a message
+ * If the message is too long so It'll be sending by parts
+ * @param json_buffer: JSON character buffer.
+ * @param sockfd: socket file descriptor.
+ * @return 0 success, 1 if an error occurs.
+ */
+int send_message(char *json_buffer, int b_size,int sockfd);
 
-// /**
-//  * @brief - send a message through sockets
-//  *
-//  * @param json_buffer: JSON character buffer.
-//  * @param sockfd: socket file descriptor.
-//  * @return 0 success, 1 if an error occurs.
-//  */
-// int send_message_to_socket(char* buffer, int sockfd);
+/**
+ * @brief - send a message through sockets
+ *
+ * @param json_buffer: JSON character buffer.
+ * @param sockfd: socket file descriptor.
+ * @return 0 success, 1 if an error occurs.
+ */
+int send_message_to_socket(char *socket_buffer, int sockfd);
 
 // /**
 //  * @brief - send a message through sockets

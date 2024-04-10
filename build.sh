@@ -8,6 +8,8 @@ mkdir build && cd build
 
 # Configura el proyecto usando CMake con el generador Ninja
 cmake -GNinja -DRUN_TESTS=1 ..
+# cmake -GNinja ..
 
 # Construye el proyecto con Ninja
-ninja
+ninja -v
+
