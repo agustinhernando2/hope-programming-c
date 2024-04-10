@@ -18,11 +18,6 @@ project(
 
 set(CMAKE_C_STANDARD 17)
 
-# gdb
-if(GDB EQUAL 1)
-  set(CMAKE_C_FLAGS "-g ")
-endif()
-
 # Include the cJSON library
 include_directories(../../external/cJSON)
 

@@ -14,14 +14,8 @@ file(GLOB TESTS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/unit/*.c)
 # Files to test
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/*.c)
 
-# static lib files to test
-file(GLOB LIB_E_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/libdyn/src/*.c)
-
-# dynamic lib files to test
-file(GLOB LIB_D_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/*.c)
-
 # Link with Unity header
-target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/Unity/src)
+target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../external/Unity/src)
 
 
 if(RUN_COVERAGE)

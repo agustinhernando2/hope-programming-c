@@ -10,7 +10,7 @@
 #include <cJSON.h>
 
 /**
- * @brief print a JSON character buffer
+ * @brief Print a JSON character buffer
  *
  * @param [in] buffer JSON character buffer to print.
  */

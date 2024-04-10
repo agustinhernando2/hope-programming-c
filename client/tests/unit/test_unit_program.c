@@ -3,8 +3,8 @@
 
 void test_example(void)
 {
-    TEST_ASSERT_EQUAL(1, subtract(3, 2));
-    TEST_ASSERT_EQUAL(0, subtract(5, 5));
+    TEST_ASSERT_EQUAL(1, 1);
+    TEST_ASSERT_EQUAL(0, 1);
 }
 
 /**

@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 # Define your project
 # See: https://cmake.org/cmake/help/latest/command/project.html
 project(
-  monitoring-application
+  monitoringApplication
   VERSION 1.0.0
   DESCRIPTION "Development of Monitoring Application for Resistance for operating systems II"
   LANGUAGES C
@@ -17,6 +17,9 @@ include(CTest)
 # Define the C standard, we are going to use std17
 # See: https://cmake.org/cmake/help/latest/variable/CMAKE_CXX_STANDARD.html
 set(CMAKE_C_STANDARD 17)
+
+# Set binary directory
+# set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 
 # Include the include directory, where the header files are located
 # See: https://cmake.org/cmake/help/latest/command/include_directories.html
@@ -55,52 +58,37 @@ FetchContent_Declare(
 
 # Ensures the named dependencies have been populated, either by an earlier call or by populating them now.
 # FetchContent_MakeAvailable(Unity cJSON)
-
-# Create the executable
-# See https://cmake.org/cmake/help/latest/command/add_executable.html
-add_executable(server src/server.c)
-add_executable(client src/client.c)
+add_library(cJSON STATIC external/cJSON/cJSON.c)
+target_compile_options(cJSON PRIVATE)
 
 # Compile the libraries
 # See: https://cmake.org/cmake/help/latest/command/add_subdirectory.html
 add_subdirectory(lib/libdyn)
 add_subdirectory(lib/libsta)
+add_subdirectory(client)
+add_subdirectory(server)
 
-add_library(cJSON STATIC external/cJSON/cJSON.c)
-target_compile_options(cJSON PRIVATE)
 
 # Include headers in lib
 # See: https://cmake.org/cmake/help/latest/command/target_include_directories.html
-target_include_directories(server PUBLIC lib/libdyn/include)
-target_include_directories(server PUBLIC lib/libsta/include)
-target_include_directories(server PUBLIC external/cJSON)
+# target_include_directories(server PUBLIC lib/libdyn/include)
+# target_include_directories(server PUBLIC lib/libsta/include)
+# target_include_directories(server PUBLIC external/cJSON)
 
-target_include_directories(client PUBLIC lib/libdyn/include)
-target_include_directories(client PUBLIC lib/libsta/include)
-target_include_directories(client PUBLIC external/cJSON)
+# target_include_directories(client PUBLIC lib/libdyn/include)
+# target_include_directories(client PUBLIC lib/libsta/include)
+# target_include_directories(client PUBLIC external/cJSON)
 
 # Compilation flags
 # set(COMMON_FLAGS "-Wall -pedantic -Werror -Wextra -Wconversion -std=gnu11")
 
-# gdb
-if(GDB EQUAL 1)
-  set(CMAKE_C_FLAGS "-g ")
-endif()
-
 # Link the libraries
 # See: https://cmake.org/cmake/help/latest/command/target_link_libraries.html
-target_link_libraries(server StatiCLib DynamiCLib cJSON) 
-target_link_libraries(client StatiCLib DynamiCLib cJSON) 
+# target_link_libraries(server StatiCLib DynamiCLib cJSON) 
+# target_link_libraries(client StatiCLib DynamiCLib cJSON) 
 
 # Add subdirectory for the tests
-if(RUN_TESTS EQUAL 1 OR RUN_COVERAGE EQUAL 1)
-  add_subdirectory(tests)
-endif()
 
-
-
-# Binaries directory
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 
 # Target clear
 add_custom_target(clear

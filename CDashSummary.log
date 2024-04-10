@@ -1,0 +1,103 @@
+* Extra verbosity turned on
+Reading Script: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/Pipeline.cmake
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+Run dashboard with model Experimental
+   Source directory: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+   Build directory: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfigurationFromCMakeVariable:Site:CTEST_SITE
+SetCTestConfiguration:Site:Agus-GF63-Thin-10UC
+SetCTestConfigurationFromCMakeVariable:BuildName:CTEST_BUILD_NAME
+SetCTestConfiguration:BuildName:linux-x86_64-gcc
+   Site: Agus-GF63-Thin-10UC
+   Build name: linux-x86_64-gcc
+   Use Experimental tag: 20240410-0059
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:ConfigureCommand:"/usr/local/bin/cmake" "-DRUN_COVERAGE=1" "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" "-DCMAKE_BUILD_TYPE:STRING=Debug" "-DCTEST_USE_LAUNCHERS:BOOL=TRUE" "-GNinja" "-S/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2" "-B/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build"
+Configure project
+Configure with command: "/usr/local/bin/cmake" "-DRUN_COVERAGE=1" "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" "-DCMAKE_BUILD_TYPE:STRING=Debug" "-DCTEST_USE_LAUNCHERS:BOOL=TRUE" "-GNinja" "-S/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2" "-B/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build"
+Run command: "/usr/local/bin/cmake" "-DRUN_COVERAGE=1" "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" "-DCMAKE_BUILD_TYPE:STRING=Debug" "-DCTEST_USE_LAUNCHERS:BOOL=TRUE" "-GNinja" "-S/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2" "-B/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build"
+CMake Error at tests/CMakeLists.txt:11 (target_link_directories):
+  Cannot specify link directories for target "monitoringApplication" which is
+  not built by this project.
+
+
+Coverage enabled
+-- Configuring incomplete, errors occurred!
+Command exited with the value: 1
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:SubmitURL:http://localhost:8080/submit.php?project=monitoringAplication
+Submit files
+   SubmitURL: http://localhost:8080/submit.php?project=monitoringAplication
+   Upload file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/Testing/20240410-0059/Configure.xml to http://localhost:8080/submit.php?project=monitoringAplication&FileName=Agus-GF63-Thin-10UC___linux-x86_64-gcc___20240410-0059-Experimental___XML___Configure.xml&build=linux-x86_64-gcc&site=Agus-GF63-Thin-10UC&stamp=20240410-0059-Experimental&MD5=896020ef87ae0c43fdef89fa6019672d Size: 1572
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetMakeCommand:/usr/local/bin/cmake --build . --config "Debug" --parallel "16"
+SetCTestConfiguration:MakeCommand:/usr/local/bin/cmake --build . --config "Debug" --parallel "16"
+SetCTestConfiguration:UseLaunchers:YES
+Build project
+MakeCommand:/usr/local/bin/cmake --build . --config "Debug" --parallel "16"
+Run command: "/usr/local/bin/cmake" "--build" "." "--config" "Debug" "--parallel" "16"
+ninja: error: loading 'build.ninja': No such file or directory
+Command exited with the value: 1
+MakeCommand:/usr/local/bin/cmake --build . --config "Debug" --parallel "16"
+   1 Compiler errors
+   0 Compiler warnings
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:SubmitURL:http://localhost:8080/submit.php?project=monitoringAplication
+Submit files
+   SubmitURL: http://localhost:8080/submit.php?project=monitoringAplication
+   Upload file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/Testing/20240410-0059/Build.xml to http://localhost:8080/submit.php?project=monitoringAplication&FileName=Agus-GF63-Thin-10UC___linux-x86_64-gcc___20240410-0059-Experimental___XML___Build.xml&build=linux-x86_64-gcc&site=Agus-GF63-Thin-10UC&stamp=20240410-0059-Experimental&MD5=d4c7944871fa2f63a8c5f3ca384dfe9a Size: 1772
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+Test project /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+Constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:SubmitURL:http://localhost:8080/submit.php?project=monitoringAplication
+Submit files
+   SubmitURL: http://localhost:8080/submit.php?project=monitoringAplication
+   Upload file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/Testing/20240410-0059/Test.xml to http://localhost:8080/submit.php?project=monitoringAplication&FileName=Agus-GF63-Thin-10UC___linux-x86_64-gcc___20240410-0059-Experimental___XML___Test.xml&build=linux-x86_64-gcc&site=Agus-GF63-Thin-10UC&stamp=20240410-0059-Experimental&MD5=c5ac288f652bd435caea829acd844560 Size: 950
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfigurationFromCMakeVariable:MemoryCheckCommand:CTEST_MEMORYCHECK_COMMAND
+SetCTestConfiguration:MemoryCheckCommand:CTEST_MEMORYCHECK_COMMAND-NOTFOUND
+SetCTestConfigurationFromCMakeVariable:MemoryCheckCommandOptions:CTEST_MEMORYCHECK_COMMAND_OPTIONS
+SetCTestConfiguration:MemoryCheckCommandOptions:--trace-children=yes --leak-check=full
+Memory check project /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:SubmitURL:http://localhost:8080/submit.php?project=monitoringAplication
+Submit files
+   SubmitURL: http://localhost:8080/submit.php?project=monitoringAplication
+   Submission successful
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfigurationFromCMakeVariable:CoverageCommand:CTEST_COVERAGE_COMMAND
+SetCTestConfiguration:CoverageCommand:gcov
+ Add coverage exclude regular expressions.
+ target directory list [/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/CMakeFiles/TargetDirectories.txt]
+Performing coverage
+ COVFILE environment variable not found, not running  bullseye
+ Cannot find any GCov coverage files.
+ Not a valid Intel Coverage command.
+ Cannot find any Python Trace.py coverage files.
+ Cannot find Cobertura XML file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/coverage.xml
+ Cannot find GTM coverage file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/gtm_coverage.mcov
+ Cannot find Cache coverage file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/cache_coverage.cmcov
+ Cannot find Jacoco coverage files: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/*jacoco.xml
+ Cannot find BlanketJS coverage files: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/*.json
+ Cannot find Delphi coverage files: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/*(*.pas).html
+SetCTestConfiguration:BuildDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build
+SetCTestConfiguration:SourceDirectory:/home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2
+SetCTestConfiguration:SubmitURL:http://localhost:8080/submit.php?project=monitoringAplication
+Submit files
+   SubmitURL: http://localhost:8080/submit.php?project=monitoringAplication
+   Upload file: /home/agustin/MisCosas/so2-2024/lab1_-agustinhernando2/build/Testing/20240410-0059/Done.xml to http://localhost:8080/submit.php?project=monitoringAplication&FileName=Agus-GF63-Thin-10UC___linux-x86_64-gcc___20240410-0059-Experimental___XML___Done.xml&build=linux-x86_64-gcc&site=Agus-GF63-Thin-10UC&stamp=20240410-0059-Experimental&MD5=607eda897e10d7e11b7e007ddfae4da2 Size: 100

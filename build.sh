@@ -7,7 +7,7 @@ rm -rf build
 mkdir build && cd build
 
 # Configura el proyecto usando CMake con el generador Ninja
-cmake -GNinja -DGDB=1 ..
+cmake -GNinja -DRUN_TESTS=1 ..
 
 # Construye el proyecto con Ninja
 ninja

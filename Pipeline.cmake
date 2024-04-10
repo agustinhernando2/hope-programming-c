@@ -1,6 +1,6 @@
 # Environment configuration
 
-set(CTEST_PROJECT_NAME "monitoring-application") #Change here and insert the correct project name.
+set(CTEST_PROJECT_NAME "monitoringAplication") #Change here and insert the correct project name.
 set(CTEST_SUBMIT_URL 
     "http://localhost:8080/submit.php?project=${CTEST_PROJECT_NAME}")
 set(CTEST_USE_LAUNCHERS YES)
@@ -15,8 +15,9 @@ set(CTEST_BINARY_DIRECTORY "${CTEST_SCRIPT_DIRECTORY}/build")
 set(CTEST_CMAKE_GENERATOR Ninja)
 set(CTEST_CONFIGURATION_TYPE Debug)
 set(configureOpts
-    "-DRUN_COVERAGE=1"
-    )
+"-DRUN_COVERAGE=1"
+"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+)
 
 # Coverage settings
 set(CTEST_COVERAGE_COMMAND gcov)

@@ -24,3 +24,10 @@
 
 # Dont track sonnar files
 .scannerwork/
+
+# Sonar files 
+/sonarqube_data/
+/sonarqube_extensions/
+/sonarqube_logs/
+/postgresql_data/
+qa_local.sh
