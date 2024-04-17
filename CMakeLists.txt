@@ -45,11 +45,11 @@ add_subdirectory(lib/libdyn)
 add_subdirectory(lib/libsta)
 add_subdirectory(client)
 add_subdirectory(server)
+add_subdirectory(external)
 
 # Add tests if enabled
 if(RUN_TESTS EQUAL 1 OR RUN_COVERAGE EQUAL 1)
   include(CTest)
-  add_subdirectory(external)
   add_subdirectory(tests)
 endif()
 

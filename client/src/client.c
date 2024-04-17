@@ -16,39 +16,26 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    int attempts = 5;
-    do
-    {
-        if (check_credentials())
-        {
-            printf("Incorrect credentials. Remaining attempts: %d\n", attempts);
-            attempts--;
-        }
-    } while (attempts > 0);
-
+    get_credentials();
 
     while (TRUE)
     {
-        memset(socket_buffer, '\0', BUFFER_SIZE);
-        fgets(socket_buffer, BUFFER_SIZE - 1, stdin);
-        socket_buffer[strlen(socket_buffer) - 1] = '\0';
-
-        // Concatena la nueva cadena a la izquierda de la cadena original
-        // if(!send_message(socket_buffer, sockfd,1)){
-        //     fprintf(stderr, "%s:%d: Error send_message. errno: %s\n", __FILE__, __LINE__,strerror(errno));
-        // }
-
-        // Verificando si se escribió: fin
-        // if (!strcmp(FIN, socket_buffer))
-        // {
-        //     printf("Finalizando ejecución\n");
-        //     exit(EXIT_SUCCESS);
-        // }
-        // if (read_response(sockfd))
-        // {
-        //     fprintf(stderr, "%s:%d: Error read_response. errno: %s\n", __FILE__, __LINE__,strerror(errno));
-        //     exit(EXIT_SUCCESS);
-        // }
+        memset(socket_buffer, 0, BUFFER_SIZE);
+        get_options();
+        add_credentials(); 
+        if (send_message(socket_buffer, BUFFER_SIZE, sockfd))
+        {
+            fprintf(stderr, "%s:%d: Error send_message. errno: %s\n", 
+            __FILE__, __LINE__, strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+        memset(socket_buffer, 0, BUFFER_SIZE);
+        if (recv_and_check_message())
+        {
+            // fprintf(stderr, "%s:%d: Error user not authorized. errno: %s\n", 
+            // __FILE__, __LINE__, strerror(errno));
+        }
+        print_cjson(socket_buffer);
     }
     return 0;
 }
@@ -69,20 +56,61 @@ int try_connect_server()
     }
     return 0;
 }
-
-int check_credentials()
+int recv_and_check_message()
 {
-    printf("Ingrese su nombre de usuario: ");
+    char value[10];
+    recv_message(sockfd, socket_buffer);
+    return get_value_of_key_from_json_string(socket_buffer, ISVALID, value);
+}
+void get_credentials()
+{
+    printf("Enter your username: ");
     fgets(username, MAX_USERNAME_LENGTH, stdin);
     username[strlen(username) - 1] = '\0';
 
-    printf("Ingrese su contraseña: ");
+    printf("Enter your password: ");
     fgets(password, MAX_PASSWORD_LENGTH, stdin);
-    username[strlen(username) - 1] = '\0';
-
+    password[strlen(password) - 1] = '\0';
+}
+void add_credentials()
+{
     cjson_add_key_value_to_json_string(socket_buffer, K_HOSTNAME, username);
     cjson_add_key_value_to_json_string(socket_buffer, K_PASSWORD, password);
-    return send_message(socket_buffer, BUFFER_SIZE, sockfd);
+}
+
+void get_options()
+{
+    int option;
+
+    printf("Please enter an option from 1 to 4:\n");
+    fprintf(stdout, "1. %s\n", OPTION1);
+    fprintf(stdout, "2. %s\n", OPTION2);
+    fprintf(stdout, "3. %s\n", OPTION3);
+    fprintf(stdout, "4. %s\n", OPTION4);
+    scanf("%d", &option);
+
+    switch (option)
+    {
+    case 1:
+        fprintf(stdout, "You have selected the %s.\n", OPTION1);
+        cjson_add_key_value_to_json_string(socket_buffer, K_COMMAND, OPTION1);
+        break;
+    case 2:
+        fprintf(stdout, "You have selected the %s.\n", OPTION2);
+        cjson_add_key_value_to_json_string(socket_buffer, K_COMMAND, OPTION2);
+        break;
+    case 3:
+        fprintf(stdout, "You have selected the %s.\n", OPTION3);
+        cjson_add_key_value_to_json_string(socket_buffer, K_COMMAND, OPTION3);
+        break;
+    case 4:
+        fprintf(stdout, "You have selected the %s.\n", OPTION4);
+        cjson_add_key_value_to_json_string(socket_buffer, K_COMMAND, OPTION4);
+        break;
+    default:
+        printf("Invalid option. Please enter a number from 1 to 4.\n");
+        break;
+    }
 }
 
 // int read_response(int sockfd){

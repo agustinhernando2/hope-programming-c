@@ -23,10 +23,11 @@ void print_cjson(char* buffer);
  *
  * @param cjson_object Pointer to the JSON object to which the key-value pair will be added.
  * @param key Content of the key.
- * @param buffer Content of the value.
+ * @param value Content of the value.
+ * @param cjson_buffer Content of the JSON character buffer result.
  * @return 0 if successful, 1 in case of an error.
  */
-int cjson_add_key_value_to_json_object(cJSON* cjson_object, char* key, char* buffer, char* cjson_buffer);
+int cjson_add_key_item_to_json_object(cJSON* cjson_object, char* key, cJSON* value, char* cjson_buffer);
 
 /**
  * @brief Add key-value pair to a JSON character buffer.
@@ -41,22 +42,36 @@ int cjson_add_key_value_to_json_object(cJSON* cjson_object, char* key, char* buf
 int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buffer);
 
 /**
+ * @brief Add key-value pair to a JSON character buffer.
+ *
+ * This function adds a key-value pair to a JSON character buffer.
+ *
+ * @param cjson_buffer Pointer to the JSON character buffer to which the key-value pair will be added.
+ * @param key Content of the key.
+ * @param cjson_buffer_value Content of the JSON character buffer value.
+ * @return 0 if successful, 1 in case of an error.
+ */
+int cjson_add_key_object_to_json_string(char* cjson_buffer, char* key, char* cjson_buffer_value);
+
+/**
  * @brief - get value of a JSON object key
  *
  * @param cjson_object JSON object.
  * @param key Key to search for in the JSON object.
- * @return Value associated with the specified key. NULL if an error occurs.
+ * @param buffer Content of the result.
+ * @return 0 if successful, 1 in case of an error.
  */
-char* get_value_of_key_from_json_object(cJSON* cjson_object, char* key);
+int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char* buffer);
 
 /**
  * @brief - get value of a JSON character buffer
  *
  * @param cjson_buffer JSON character buffer.
  * @param key Key to search for in the JSON.
- * @return Value associated with the specified key. NULL if an error occurs.
+ * @param buffer Content of the result.
+ * @return 0 if successful, 1 in case of an error.
  */
-char* get_value_of_key_from_json_string(char* cjson_buffer, char* key);
+int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char* buffer);
 
 /**
  * @brief - parse JSON object to JSON character buffer

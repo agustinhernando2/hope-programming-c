@@ -2,42 +2,44 @@
 #include <unity.h>
 #include <cjson_handler.h>
 
-void test_cjson_add_key_value_to_json_object(){
-    char key[10] = "key";
-    char buffer[10] = "buffer";
+void test_cjson_add_key_value_to_json_string(){
+    char key[] = "key";
+    char value[] = "value";
     char cjson_buffer[50];
 
-    cJSON* cjson_object = NULL;
+    TEST_ASSERT_EQUAL(0, cjson_add_key_value_to_json_string(cjson_buffer, key, value));
+    TEST_ASSERT_EQUAL_STRING("{\n\t\"key\":\t\"value\"\n}", cjson_buffer);
 
-    TEST_ASSERT_EQUAL(0,cjson_add_key_value_to_json_object(cjson_object, key, buffer, cjson_buffer));
 }
-void test_example(void)
-{
-    TEST_ASSERT_EQUAL(1, 1);
-    TEST_ASSERT_EQUAL(1, 1);
+
+void test_cjson_add_key_object_to_json_string(){
+    char key[] = "key";
+    char cjson_buffer[50];
+    char cjson_buffer_value[] = "{\"key\":\"value\"}";
+    
+    TEST_ASSERT_EQUAL(0, cjson_add_key_object_to_json_string(cjson_buffer, key, cjson_buffer_value));
+    TEST_ASSERT_EQUAL_STRING("{\n\t\"key\":\t{\n\t\t\"key\":\t\"value\"\n\t}\n}", cjson_buffer);
+}
+
+
+void test_cjson_add_key_object_to_json_string_2(){
+    char key[] = "key_added";
+    char cjson_buffer[500]="{\"key_root1\":\"value\",\"key_root2\":\"value\"}";
+    char cjson_buffer_value[] = "{\"key1\":\"value\",\"key2\":\"value\"}";
+    
+    TEST_ASSERT_EQUAL(0, cjson_add_key_object_to_json_string(cjson_buffer, key, cjson_buffer_value));
+    TEST_ASSERT_EQUAL_STRING("{\n\t\"key_root1\":\t\"value\",\n\t\"key_root2\":\t\"value\",\n\t\"key_added\":\t{\n\t\t\"key1\":\t\"value\",\n\t\t\"key2\":\t\"value\"\n\t}\n}", cjson_buffer);
 }
 
 /**
- * @brief funcion que se llama antes de cada test.
- *
- * podrias aqui setear variables.
- *
- * @param[in].
- * @param[out].
- * @return.
+ * @brief run at the end of tests.
  */
 void setUp(void)
 {
 }
 
 /**
- * @brief funcion que se llama despues de cada test.
- *
- * .
- *
- * @param[in].
- * @param[out].
- * @return.
+ * @brief run at the begining of tests.
  */
 void tearDown(void)
 {
@@ -46,8 +48,8 @@ void tearDown(void)
 int main()
 {
     UNITY_BEGIN();
-    // RUN_TEST(test_div);
-    RUN_TEST(test_example);
-    RUN_TEST(test_cjson_add_key_value_to_json_object);
+    RUN_TEST(test_cjson_add_key_object_to_json_string);
+    RUN_TEST(test_cjson_add_key_value_to_json_string);
+    RUN_TEST(test_cjson_add_key_object_to_json_string_2);
     return UNITY_END();
 }

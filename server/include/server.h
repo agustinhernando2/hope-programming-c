@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
+#include <sys/un.h>
 
 /* Libraries */
 #include <emergency_handler.h>
@@ -21,25 +22,14 @@
 #define STYPE_IPV6 2
 #define N_CONNECTIONS 5
 
-struct sockaddr_in serv_addr;
-uint16_t puerto;
-int status;
-
-pid_t pid;
-int active_childs = 0;
-uint8_t selected_ip_conn = 1;
-
-char socket_buffer[BUFFER_SIZE];
-
+int sockfd;
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
 volatile __uint8_t flag_handler = 0;
 
+void run_server_ipv4(char* argv[]);
 
-char socket_buffer[BUFFER_SIZE];
-
-
-void run_server(uint8_t ipv4);
+void run_server_ipv6(char* argv[]);
 
 /**
  * @brief .
@@ -48,7 +38,7 @@ void run_server(uint8_t ipv4);
  *
  * @param[in] argv Command-line arguments.
  */
-int connect_server(int sockfd, uint8_t ipv4);
+int connect_server_ipv4(int *sockfd, char* argv[]);
 
 /**
  * @brief .
@@ -57,9 +47,7 @@ int connect_server(int sockfd, uint8_t ipv4);
  *
  * @param[in] argv Command-line arguments.
  */
-int connect_server_ipv6();
-
-// void get_interface_ipv6(char* ip, char* iface)
+int connect_server_ipv6(int *sockfd, char* argv[]);
 
 static void sign_handler();
 

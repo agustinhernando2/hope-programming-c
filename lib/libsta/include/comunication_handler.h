@@ -33,11 +33,11 @@ int send_message(char *json_buffer, int b_size,int sockfd);
  */
 int send_message_to_socket(char *socket_buffer, int sockfd);
 
-// /**
-//  * @brief - send a message through sockets
-//  *
-//  * @param json_buffer: JSON character buffer.
-//  * @param sockfd: socket file descriptor.
-//  * @return 0 success, 1 if an error occurs.
-//  */
-// int recv_message(int sockfd, char *buffer)
+/**
+ * @brief - send a message through sockets
+ *
+ * @param json_buffer: JSON character buffer.
+ * @param sockfd: socket file descriptor.
+ * @return 0 success, 1 if an error occurs.
+ */
+int recv_message(int sockfd, char *json_buffer);
