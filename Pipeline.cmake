@@ -2,7 +2,7 @@
 
 set(CTEST_PROJECT_NAME "monitoringAplication") #Change here and insert the correct project name.
 set(CTEST_SUBMIT_URL 
-    "http://localhost:8080/submit.php?project=${CTEST_PROJECT_NAME}")
+    "http://localhost:9000/submit.php?project=${CTEST_PROJECT_NAME}")
 set(CTEST_USE_LAUNCHERS YES)
 
 # General settings
@@ -27,7 +27,7 @@ find_program(CTEST_MEMORYCHECK_COMMAND valgrind)
 set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
 
 # Step 1 - Clean previous pipeline run
-#ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
 
 # Step 2 - Configure
 ctest_start(Experimental)

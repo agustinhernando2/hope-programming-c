@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     int status;
     pid_t pid, pid_c;
     int child_process = 0;
-
+    
     if (argc < 3)
     {
         fprintf(stderr, "Uso: %s <puerto> <unix_name>\n", argv[0]);
@@ -43,22 +43,6 @@ int main(int argc, char *argv[])
     // else
     // {
     //     fprintf(stderr,"Error creating process 2. Errno: %s\n", strerror(errno));
-    //     exit(EXIT_FAILURE);
-    // }
-
-    // pid = fork();
-    // if (pid == 0)
-    // {
-    //     run_server_bluetooth();
-    //     exit(EXIT_SUCCESS);
-    // }
-    // else if (pid > 0)
-    // {
-    //     child_process++;
-    // }
-    // else
-    // {
-    //     fprintf(stderr,"Error creating process 3. Errno: %s\n", strerror(errno));
     //     exit(EXIT_FAILURE);
     // }
 
@@ -102,7 +86,7 @@ void run_server_ipv4(char* argv[])
         pid = fork();
 
         if (pid == 0)
-        { // Proceso hijo
+        { 
             close(sockfd);
 
             while (TRUE)
@@ -115,6 +99,10 @@ void run_server_ipv4(char* argv[])
                 printf("PROCESO %d. ", getpid());
                 printf("Recibí: %s\n", socket_buffer);
                 sleep(1);
+                if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
+
+                    exit(EXIT_FAILURE);
+                }
                 if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
 
                     exit(EXIT_FAILURE);
@@ -230,6 +218,7 @@ int connect_server_ipv6(int* sockfd, char* argv[])
 
 static void sign_handler()
 {
+
     if (flag_handler)
     {
         close(sockfd);

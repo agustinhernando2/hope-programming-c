@@ -1,4 +1,3 @@
-// #include <logic.h>
 #include <unity.h>
 #include <cjson_handler.h>
 

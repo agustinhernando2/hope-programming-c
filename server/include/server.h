@@ -9,6 +9,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <sys/un.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 /* Libraries */
 #include <emergency_handler.h>
@@ -21,7 +23,10 @@
 #define STYPE_IPV4 1
 #define STYPE_IPV6 2
 #define N_CONNECTIONS 5
+#define JSON_FILE "data.json"
 
+
+char *json_data;
 int sockfd;
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
