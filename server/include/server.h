@@ -32,6 +32,10 @@ int sockfd;
    possibility of a signal arriving in the middle of the operation.  */
 volatile __uint8_t flag_handler = 0;
 
+int read_file(char* filename, char** buffer);
+
+int write_file(char* filename, char* buffer);
+
 void run_server_ipv4(char* argv[]);
 
 void run_server_ipv6(char* argv[]);
