@@ -99,12 +99,10 @@ Implement a refuge state summary in JSON format, providing population with key i
 ```json
 {
    "alerts": {
-      {
-         "north_entry": 1,
-         "east_entry": 1,
-         "west_entry": 1,
-         "south_entry": 1,
-      },
+      "north_entry": 1,
+      "east_entry": 1,
+      "west_entry": 1,
+      "south_entry": 1
    },
    "supplies": {
       "food": {

@@ -6,10 +6,10 @@ int send_message(char* json_buffer, int b_size, int sockfd)
     char socket_buffer[BUFFER_SIZE];
     memset(socket_buffer, 0, BUFFER_SIZE);
 
-    if (b_size < BUFFER_SIZE)
+    if (b_size <= BUFFER_SIZE)
     {
         strncpy(socket_buffer, json_buffer, b_size);
-        return (send_message_to_socket(socket_buffer, sockfd));
+        return (send_message_to_socket(socket_buffer,b_size, sockfd));
     }
     while (TRUE)
     {
@@ -18,7 +18,7 @@ int send_message(char* json_buffer, int b_size, int sockfd)
             break;
         }
         strncpy(socket_buffer, json_buffer + slice, BUFFER_SIZE);
-        if (send_message_to_socket(socket_buffer, sockfd))
+        if (send_message_to_socket(socket_buffer,BUFFER_SIZE, sockfd))
         {
             fprintf(stderr, "%s:%d: Error send_message_to_socket.\n", __FILE__, __LINE__);
             return 1;
@@ -26,12 +26,16 @@ int send_message(char* json_buffer, int b_size, int sockfd)
         slice += BUFFER_SIZE;
     }
     strncpy(socket_buffer, json_buffer + slice, BUFFER_SIZE);
-    return send_message_to_socket(socket_buffer, sockfd);
+    return send_message_to_socket(socket_buffer,strlen(json_buffer), sockfd);
 }
 
-int send_message_to_socket(char* json_buffer, int sockfd)
+int send_message_to_socket(char* json_buffer, int b_size, int sockfd)
 {
-    if (send(sockfd, json_buffer, BUFFER_SIZE, 0) == -1)
+    if((b_size == 0)||(strlen(json_buffer) == 0))
+    {
+        return 0;
+    }
+    if (send(sockfd, json_buffer, b_size, 0) == -1)
     {
         fprintf(stderr, "%s:%d: Error sending the json_buffer content.\n", __FILE__, __LINE__);
         return 1;

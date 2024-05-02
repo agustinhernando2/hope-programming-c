@@ -15,8 +15,9 @@
 /* Libraries */
 #include <emergency_handler.h>
 #include <critical_handler.h>
-#include <server_req_handler.h>
 #include <comunication_handler.h>
+#include <supplies_data_handler.h>
+#include <r_w_handler.h>
 #include <cjson_handler.h>
 #include <cJSON.h>
 
@@ -26,15 +27,11 @@
 #define JSON_FILE "data.json"
 
 
-char *json_data;
-int sockfd;
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
-volatile __uint8_t flag_handler = 0;
+volatile sig_atomic_t flag_handler = 0;
+int sockfd;
 
-int read_file(char* filename, char** buffer);
-
-int write_file(char* filename, char* buffer);
 
 void run_server_ipv4(char* argv[]);
 
@@ -60,4 +57,10 @@ int connect_server_ipv6(int *sockfd, char* argv[]);
 
 static void sign_handler();
 
+void run_server(int newsockfd);
 
+int get_command(char* socket_buffer);
+
+int check_credentials(char* socket_buffer);
+
+void make_deneid_message(char* supplies_buffer);

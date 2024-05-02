@@ -69,8 +69,6 @@ int main(int argc, char *argv[])
 
 void run_server_ipv4(char* argv[])
 {
-    char socket_buffer[BUFFER_SIZE];
-    int sockfd;
     int newsockfd, clilen, pid;
     struct sockaddr_in cli_addr;
 
@@ -88,42 +86,8 @@ void run_server_ipv4(char* argv[])
         if (pid == 0)
         { 
             close(sockfd);
-            char* json_file = NULL;
-            while (TRUE)
-            {
-                memset(socket_buffer, 0, BUFFER_SIZE);
-                if (recv_message(newsockfd, socket_buffer))
-                {
-                    fprintf(stderr, "NULL socket_buffer, errno: %s", strerror(errno));
-                }
-                printf("PROCESO %d. ", getpid());
-                printf("Recibí: %s\n", socket_buffer);
-                sleep(1);
-                if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
-                    exit(EXIT_FAILURE);
-                }
 
-                if(read_file("data/state_summary.json", &json_file))
-                {
-                    exit(EXIT_FAILURE);
-                }
-
-                if (send_message(json_file, strlen(json_file), newsockfd)){
-
-                    exit(EXIT_FAILURE);
-                }
-                sleep(10);
-                if (write_file("data/state_summary.json", json_file))
-                {
-                    exit(EXIT_FAILURE);
-                }
-                
-
-                if (flag_handler)
-                {
-                    exit(EXIT_SUCCESS);
-                }
-            }
+            run_server(newsockfd);
         }
         else
         {
@@ -132,82 +96,113 @@ void run_server_ipv4(char* argv[])
         }
     }
 }
-
-int read_file(char* filename, char** buffer)
-{
-    FILE* file;
-    // Open a file in read mode
-    file = fopen(filename, "r");
-    if (file == NULL)
+void run_server(int newsockfd){
+    char socket_buffer[BUFFER_SIZE];
+    char* supplies_buffer = NULL;
+    while (TRUE)
     {
-        fprintf(stderr, "%s:%d: Error opening file\n",__FILE__, __LINE__);
-        return 1;
+        memset(socket_buffer, 0, BUFFER_SIZE);
+        if (recv_message(newsockfd, socket_buffer))
+        {
+            fprintf(stderr, "NULL socket_buffer, errno: %s", strerror(errno));
+        }
+        printf("PROCESO %d. ", getpid());
+        printf("Recibí: %s\n", socket_buffer);
+        // sleep(1);
+        // if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
+        //     exit(EXIT_FAILURE);
+        // }
+
+        switch (get_command(socket_buffer))
+        {
+        case OPTION1_:
+            if(get_supply_status(&supplies_buffer)){
+                fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            if (send_message(supplies_buffer, strlen(supplies_buffer), newsockfd)){
+                fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            // Free memory
+            free_ptr(&supplies_buffer);
+            break;
+        case OPTION2_:
+            if (check_credentials(socket_buffer))
+            {
+                make_deneid_message(supplies_buffer);
+                if (send_message(supplies_buffer, strlen(supplies_buffer), newsockfd)){
+                    fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            }
+            if(set_supply_status(socket_buffer,supplies_buffer)){
+                fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            if (send_message(supplies_buffer, strlen(supplies_buffer), newsockfd)){
+                fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            // Free memory
+            free_ptr(&supplies_buffer);
+            break;
+        
+        default:
+            fprintf(stdout, "Command error\n");
+            break;
+        };
+        
+        if (flag_handler)
+        {
+            exit(EXIT_SUCCESS);
+        }
     }
-    // Get size of the txt file
-    fseek(file, 0, SEEK_END);
-    long fsize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    // Store the content of the file
-    char *string = malloc(fsize + 1);
-    if (string == NULL) {
-        fclose(file);
-        fprintf(stderr, "%s:%d: Error allocating memory\n",__FILE__, __LINE__);
-        return 1;
-    }
-
-    // Read the file content
-    size_t bytesRead = fread(string, 1, fsize, file);
-    if (bytesRead != fsize) {
-        fclose(file);
-        free(string);
-        fprintf(stderr, "%s:%d: Error reading file\n",__FILE__, __LINE__);
-        return 1;
-    }
-
-    // Add terminator
-    string[fsize] = '\0';
-    fclose(file);
-    // Add return
-    *buffer = string;
-
-    return 0;
 }
-int write_file(char* filename, char* buffer)
+
+void make_deneid_message(char* supplies_buffer)
 {
-    if (buffer == NULL | strlen(buffer)) {
-        fprintf(stderr, "%s:%d: buffer error \n",__FILE__, __LINE__);
+    fprintf(stdout, "Only the administrator can modify the data.\n");
+    if(get_supply_status(&supplies_buffer)){
+        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    cjson_add_key_value_to_json_string(supplies_buffer, K_ACC_DENEID, TRUE_);
+}
+
+int check_credentials(char* socket_buffer)
+{
+    char password[MAX_PASSWORD_LENGTH];
+    char username[MAX_USERNAME_LENGTH];
+
+    if(get_value_of_key_from_json_string(socket_buffer, K_HOSTNAME, username))
+    {
+        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if(get_value_of_key_from_json_string(socket_buffer, K_PASSWORD, password))
+    {
+        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (strcmp(username, ADMIN) == 0 && strcmp(password, ADMIN) == 0)
+    {
         return 0;
     }
-    FILE* file;
-    // Open a file in write mode
-    file = fopen(filename, "w");
-    if (file == NULL)
-    {
-        fprintf(stderr, "%s:%d: Error opening file %s\n",__FILE__, __LINE__, filename);
-        return 1;
-    }
-    // Write the each byte of the buffer to the file
-    size_t bytesWritten = fwrite(buffer, 1, strlen(buffer), file);
-    if (bytesWritten != strlen(buffer)) {
-        fclose(file);
-        fprintf(stderr, "%s:%d: Error writing file\n",__FILE__, __LINE__);
-        return 1;
-    }
-    // Free memory
-    if (buffer != NULL) {
-        free(buffer);
-        buffer = NULL;
-    }
-    fclose(file);
-    return 0;
+    return 1;
 }
 
-
-
-
-
-
+int get_command(char* socket_buffer)
+{
+    char c_buffer[C_SIZE];
+    if(get_value_of_key_from_json_string(socket_buffer, K_COMMAND, c_buffer))
+    {
+        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return 0;
+    }
+    return atoi(c_buffer);
+}
 
 int connect_server_unix(int* sockfd, char* argv[])
 {
