@@ -1,13 +1,12 @@
 #include "server.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    signal(SIGINT, sign_handler);
-    signal(SIGTERM, sign_handler);
+    set_signal_handlers();
     int status;
     pid_t pid, pid_c;
     int child_process = 0;
-    
+
     if (argc < 3)
     {
         fprintf(stderr, "Uso: %s <puerto> <unix_name>\n", argv[0]);
@@ -84,7 +83,7 @@ void run_server_ipv4(char* argv[])
         pid = fork();
 
         if (pid == 0)
-        { 
+        {
             close(sockfd);
 
             run_server(newsockfd);
@@ -96,92 +95,105 @@ void run_server_ipv4(char* argv[])
         }
     }
 }
-void run_server(int newsockfd){
-    char socket_buffer[BUFFER_SIZE];
-    char* supplies_buffer = NULL;
+void run_server(int newsockfd)
+{
     while (TRUE)
     {
-        memset(socket_buffer, 0, BUFFER_SIZE);
-        if (recv_message(newsockfd, socket_buffer))
+        memset(recv_socket_buffer, 0, BUFFER_SIZE);
+        if (recv_message(newsockfd, recv_socket_buffer))
         {
-            fprintf(stderr, "NULL socket_buffer, errno: %s", strerror(errno));
+            fprintf(stderr, "NULL recv_socket_buffer, errno: %s", strerror(errno));
+            exit(EXIT_FAILURE);
         }
         printf("PROCESO %d. ", getpid());
-        printf("Recibí: %s\n", socket_buffer);
-        // sleep(1);
+        printf("Recibí: %s\n", recv_socket_buffer);
+        sleep(2);
         // if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
         //     exit(EXIT_FAILURE);
         // }
 
-        switch (get_command(socket_buffer))
+        switch (get_command())
         {
+        case CLOSE_CONNECTION:
+            fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_);
+            if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+            {
+                fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            close(newsockfd);
+            sleep(5);
+            exit(EXIT_SUCCESS);
+            break;
         case OPTION1_:
-            if(get_supply_status(&supplies_buffer)){
+            if (get_supply_status(&send_socket_buffer))
+            {
                 fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
                 exit(EXIT_FAILURE);
             }
-            if (send_message(supplies_buffer, strlen(supplies_buffer), newsockfd)){
+            if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+            {
                 fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
                 exit(EXIT_FAILURE);
             }
             // Free memory
-            free_ptr(&supplies_buffer);
+            free_ptr(&send_socket_buffer);
             break;
         case OPTION2_:
-            if (check_credentials(socket_buffer))
+            if (check_credentials())
             {
-                make_deneid_message(supplies_buffer);
-                if (send_message(supplies_buffer, strlen(supplies_buffer), newsockfd)){
+                make_deneid_message();
+                if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+                {
                     fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
                     exit(EXIT_FAILURE);
                 }
                 break;
             }
-            if(set_supply_status(socket_buffer,supplies_buffer)){
+            if (set_supply_status(recv_socket_buffer, send_socket_buffer))
+            {
                 fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
                 exit(EXIT_FAILURE);
             }
-            if (send_message(supplies_buffer, strlen(supplies_buffer), newsockfd)){
+            if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+            {
                 fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
                 exit(EXIT_FAILURE);
             }
             // Free memory
-            free_ptr(&supplies_buffer);
+            free_ptr(&send_socket_buffer);
             break;
-        
+
         default:
             fprintf(stdout, "Command error\n");
             break;
         };
-        
-        if (flag_handler)
-        {
-            exit(EXIT_SUCCESS);
-        }
     }
 }
 
-void make_deneid_message(char* supplies_buffer)
+void make_deneid_message()
 {
     fprintf(stdout, "Only the administrator can modify the data.\n");
-    if(get_supply_status(&supplies_buffer)){
+    if (get_supply_status(&send_socket_buffer))
+    {
         fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
-    cjson_add_key_value_to_json_string(supplies_buffer, K_ACC_DENEID, TRUE_);
+    cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_);
 }
 
-int check_credentials(char* socket_buffer)
+int check_credentials()
 {
     char password[MAX_PASSWORD_LENGTH];
     char username[MAX_USERNAME_LENGTH];
 
-    if(get_value_of_key_from_json_string(socket_buffer, K_HOSTNAME, username))
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_HOSTNAME, username))
     {
         fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
         return 1;
     }
-    if(get_value_of_key_from_json_string(socket_buffer, K_PASSWORD, password))
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_PASSWORD, password))
     {
         fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
         return 1;
@@ -193,12 +205,16 @@ int check_credentials(char* socket_buffer)
     return 1;
 }
 
-int get_command(char* socket_buffer)
+int get_command()
 {
     char c_buffer[C_SIZE];
-    if(get_value_of_key_from_json_string(socket_buffer, K_COMMAND, c_buffer))
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_COMMAND, c_buffer))
     {
         fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return -1;
+    }
+    if (flag_handler)
+    {
         return 0;
     }
     return atoi(c_buffer);
@@ -299,16 +315,49 @@ int connect_server_ipv6(int* sockfd, char* argv[])
     return 0;
 }
 
-static void sign_handler()
+static void sign_handler(int signal)
 {
-
-    if (flag_handler)
+    switch (signal)
     {
-        close(sockfd);
+    case SIGINT:
+        /* out of the loop*/
+        printf("SIGINT called\n");
+        flag_handler = 1;
+        printf("\
+            The server is not accepting any more connections.\
+            \nThe received messages will close the client connection.\n");
+        break;
+    case SIGTSTP:
+        /* send end to client */
+        printf("SIGTSTP called\n");
         exit(EXIT_SUCCESS);
+        break;
+    default:
+        break;
     }
-    flag_handler = 1;
-    printf("\
-    The server is not accepting any more connections.\
-    \nThe received messages will close the client connection.\n");
+    return;
+}
+
+void set_signal_handlers()
+{
+    struct sigaction sa;
+    sa.sa_handler = sign_handler;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+
+    if (sigaction(SIGINT, &sa, NULL) == -1)
+    {
+        perror("Couldn't set SIGINT handler");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTSTP, &sa, NULL) == -1)
+    {
+        perror("Couldn't set SIGTSTP handler");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &sa, NULL) == -1)
+    {
+        perror("Couldn't set SIGTERM handler");
+        exit(EXIT_FAILURE);
+    }
 }

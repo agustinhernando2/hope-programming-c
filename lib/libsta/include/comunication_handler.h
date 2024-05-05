@@ -17,6 +17,7 @@
 #define SUP_OPT1_EQ "food"
 #define SUP_OPT2 "2"
 #define SUP_OPT2_EQ "medicine"
+#define CLOSE_CONNECTION 0
 #define OPTION1_ 1
 #define OPTION1 "1"
 #define OPTION1_EQ "Get server status"

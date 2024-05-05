@@ -85,17 +85,20 @@ int recv_and_check_message()
     if (strcmp(value, TRUE_) == 0)
     {
         close(sockfd);
-		fprintf(stdout,"\n***Connection closed, terminating execution...***\n" );
+		clear_screen();
+        fprintf(stdout,"\n***Connection closed, terminating execution...***\n" );
+        sleep(1);
         exit(EXIT_SUCCESS);
     }
-    sleep(1);
     clear_screen();
     print_cjson(recv_socket_buffer);
     while(flag_get_supply == 1)
     {
-        send_message_to_server();
-        fprintf(stdout, "...\n");
         fprintf(stdout, "\n\tCTRL + C to back\n");
+        send_message_to_server();
+        sleep(1);
+        fprintf(stdout, "...\n");
+        sleep(1);
         recv_and_check_message();
     }
     
@@ -189,39 +192,14 @@ void clear_screen() {
     printf("\033[2J\033[H");
 }
 
-
-/*static void sign_handler_ctrl_z()
-{
-    memset(send_socket_buffer, 0, BUFFER_SIZE);
-    cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_);
-    if (send_message(send_socket_buffer, BUFFER_SIZE, sockfd))
-    {
-        fprintf(stderr, "%s:%d: Error send_message. errno: %s\n", 
-        __FILE__, __LINE__, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    close(sockfd);
-    exit(EXIT_SUCCESS);
-}*/
 static void sign_handler(int signal)
 {
     switch (signal) {
         case SIGINT:
             /* out of the loop*/
+            printf("SIGINT called\n");
             flag_get_supply = 0;
             break;
-        case SIGTSTP:
-            /* send end to client */
-            memset(send_socket_buffer, 0, BUFFER_SIZE);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_);
-            if (send_message(send_socket_buffer, BUFFER_SIZE, sockfd))
-            {
-                fprintf(stderr, "%s:%d: Error send_message. errno: %s\n", 
-                __FILE__, __LINE__, strerror(errno));
-                exit(EXIT_FAILURE);
-            }
-            close(sockfd);
-            exit(EXIT_SUCCESS);
         default: 
             break;
     }

@@ -31,10 +31,25 @@
    possibility of a signal arriving in the middle of the operation.  */
 volatile sig_atomic_t flag_handler = 0;
 int sockfd;
+char* send_socket_buffer = NULL;
+char recv_socket_buffer[BUFFER_SIZE];
 
-
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
 void run_server_ipv4(char* argv[]);
 
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
 void run_server_ipv6(char* argv[]);
 
 /**
@@ -55,12 +70,58 @@ int connect_server_ipv4(int *sockfd, char* argv[]);
  */
 int connect_server_ipv6(int *sockfd, char* argv[]);
 
-static void sign_handler();
-
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
 void run_server(int newsockfd);
 
-int get_command(char* socket_buffer);
+/**
+ * @brief get command
+ *
+ * @return 0 on error command, positive number on success.
+ */
+int get_command();
 
-int check_credentials(char* socket_buffer);
+/**
+ * @brief check credentials
+ *
+ * @return 0 on success, 1 deneid.
+ */
+int check_credentials();
 
-void make_deneid_message(char* supplies_buffer);
+/**
+ * @brief do message with deneid operation.
+ *
+ */
+void make_deneid_message();
+
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
+static void sign_handler(int signal);
+
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
+void set_signal_handlers();
+
+/**
+ * @brief .
+ *
+ * .
+ *
+ * @param[in] argv Command-line arguments.
+ */
+int check_server_status();
