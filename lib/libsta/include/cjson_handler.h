@@ -11,7 +11,7 @@
 
 /**
  * @brief Print a JSON character buffer
- *
+ *  verify if the buffer is a json object and print it.
  * @param [in] buffer JSON character buffer to print.
  */
 void print_cjson(char* buffer);
@@ -58,20 +58,20 @@ int cjson_add_key_object_to_json_string(char* cjson_buffer, char* key, char* cjs
  *
  * @param cjson_object JSON object.
  * @param key Key to search for in the JSON object.
- * @param buffer Content of the result.
+ * @param ptr_buffer pointer to save the result content.
  * @return 0 if successful, 1 in case of an error.
  */
-int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char* buffer);
+int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char** ptr_buffer);
 
 /**
  * @brief - get value of a JSON character buffer
  *
  * @param cjson_buffer JSON character buffer.
  * @param key Key to search for in the JSON.
- * @param buffer Content of the result.
+ * @param ptr_buffer pointer to save the result content.
  * @return 0 if successful, 1 in case of an error.
  */
-int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char* buffer);
+int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char** ptr_buffer);
 
 /**
  * @brief - parse JSON object to JSON character buffer
@@ -81,3 +81,29 @@ int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char* buffe
  * @return 1 success. 1 if an error occurs.
  */
 int json_object_to_json_string(cJSON* cjson_object, char* buffer);
+
+/**
+ * @brief - merge two JSON character buffers
+ *
+ * @param json_string1 JSON character buffer 1.
+ * @param json_string2 JSON character buffer 2.
+ * @param merged_json content of the JSON character buffer merged.
+ * @return 0 success. 1 if an error occurs.
+ */
+int merge_json_strings(char* json_string1, char* json_string2, char* merged_json);
+
+/**
+ * @brief - check if a key is in a JSON object
+ *
+ * @param cjson_object cJSON to analize.
+ * @return 1 if the key is in the cJSON object, 0 otherwise.
+ */
+int is_key_in_json_object(cJSON* cjson_object, char* key);
+
+/**
+ * @brief - check if a key is in a JSON character buffer
+ *
+ * @param cjson_buffer JSON character buffer to analize.
+ * @return 1 if the key is in the JSON character buffer, 0 otherwise.
+ */
+int is_key_in_json_buffer(char* cjson_buffer, char* key);

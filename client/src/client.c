@@ -2,19 +2,7 @@
 
 int main(int argc, char* argv[])
 {
-    struct sigaction sa;
-    sa.sa_handler = sign_handler;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-
-    if ( sigaction(SIGINT, &sa, NULL) == -1 ) {
-        perror("Couldn't set SIGINT handler");
-        exit(EXIT_FAILURE);
-    }
-    if ( sigaction(SIGTSTP, &sa, NULL) == -1 ) {
-        perror("Couldn't set SIGTSTP handler");
-        exit(EXIT_FAILURE);
-    }
+    set_signal_handlers();
 
     if (argc < 3)
     {
@@ -38,8 +26,6 @@ int main(int argc, char* argv[])
         add_credentials();
         send_message_to_server();
         recv_and_check_message();
-        clear_screen();
-        print_cjson(recv_socket_buffer);
     }
     return 0;
 }
@@ -71,38 +57,42 @@ int try_connect_server()
 }
 int recv_and_check_message()
 {
-    char value[10];
     memset(recv_socket_buffer, 0, BUFFER_SIZE);
     recv_message(sockfd, recv_socket_buffer);
-    
-    get_value_of_key_from_json_string(recv_socket_buffer, K_ACC_DENEID, value);
-    if (strcmp(value, TRUE_) == 0)
+
+    if (is_key_in_json_buffer(recv_socket_buffer, K_ACC_DENEID))
     {
+        clear_screen();
+        // print message
         fprintf(stdout, "Access denied\n");
-        sleep(1);
+        sleep(2);
     }
-    get_value_of_key_from_json_string(recv_socket_buffer, K_END, value);
-    if (strcmp(value, TRUE_) == 0)
+    if (is_key_in_json_buffer(recv_socket_buffer, K_ACC_DENEID))
     {
-        close(sockfd);
-		clear_screen();
-        fprintf(stdout,"\n***Connection closed, terminating execution...***\n" );
-        sleep(1);
-        exit(EXIT_SUCCESS);
+        end_client_conn();
     }
+    // show message
     clear_screen();
     print_cjson(recv_socket_buffer);
+
     while(flag_get_supply == 1)
     {
+        // in loop to get supply until SIGINT is ejecuted
         fprintf(stdout, "\n\tCTRL + C to back\n");
         send_message_to_server();
-        sleep(1);
-        fprintf(stdout, "...\n");
-        sleep(1);
         recv_and_check_message();
     }
     
     return 0;
+}
+void end_client_conn()
+{
+    close(sockfd);
+    clear_screen();
+    // print message
+    fprintf(stdout, "\n***Connection closed, terminating execution...***\n");
+    sleep(1);
+    exit(EXIT_SUCCESS);
 }
 void get_credentials()
 {
@@ -124,58 +114,78 @@ void get_options()
 {
     int option;
     memset(send_socket_buffer, 0, BUFFER_SIZE);
-    printf("Please enter an option (1 or 2):\n");
-    fprintf(stdout, "1. %s\n", OPTION1_EQ);
-    fprintf(stdout, "2. %s\n", OPTION2_EQ);
-    scanf("%d", &option);
-
-    switch (option)
+    int flag;
+    do
     {
-    case 1:
-        fprintf(stdout, "You have selected: %s.\n", OPTION1_EQ);
-        flag_get_supply = 1;
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION1);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION1_EQ);
-        break;
-    case 2:
-        fprintf(stdout, "You have selected: %s.\n", OPTION2_EQ);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION2);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION2_EQ);
-        get_supplies_options();
-        break;
-    default:
-        printf("Invalid option. Please enter a valid number.\n");
-        break;
-    }
+        clear_screen();
+        flag = 0;
+        printf("Please enter an option (1 or 2):\n");
+        fprintf(stdout, "1. %s\n", OPTION1_EQ);
+        fprintf(stdout, "2. %s\n", OPTION2_EQ);
+        fprintf(stdout, "3. %s\n", OPTION_END_EQ);
+        scanf("%d", &option);
+
+        switch (option)
+        {
+        case 1:
+            fprintf(stdout, "You have selected: %s.\n", OPTION1_EQ);
+            flag_get_supply = 1;
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION1);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION1_EQ);
+            break;
+        case 2:
+            fprintf(stdout, "You have selected: %s.\n", OPTION2_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION2);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION2_EQ);
+            get_supplies_options();
+            break;
+        case OPTION_END:
+            fprintf(stdout, "You have selected: %s.\n", OPTION_END_EQ);
+            end_client_conn();
+            break;
+        default:
+            printf("Invalid option. Please enter a valid number.\n");
+            flag=1;
+            break;
+        }
+    }while (flag);
 }
 
 void get_supplies_options()
 {
     int option;
     int value;
-    char key[50];
+    char key[MAX_K_V_SUP_LENGHT];
 
-    printf("Please enter an option (1 or 2):\n");
-    fprintf(stdout, "1. %s\n", SUP_OPT1_EQ);
-    fprintf(stdout, "2. %s\n", SUP_OPT2_EQ);
-    scanf("%d", &option);
-
-    switch (option)
+    int flag;
+    do
     {
-    case 1:
-        fprintf(stdout, "You have selected: %s.\n", SUP_OPT1_EQ);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT1);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT1_EQ);
-        break;
-    case 2:
-        fprintf(stdout, "You have selected: %s.\n", SUP_OPT2_EQ);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT2);
-        cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT2_EQ);
-        break;
-    default:
-        printf("Invalid option. Please enter a valid number.\n");
-        break;
-    }
+        clear_screen();
+        flag = 0;
+        printf("Please enter an option (1 or 2):\n");
+        fprintf(stdout, "1. %s\n", SUP_OPT1_EQ);
+        fprintf(stdout, "2. %s\n", SUP_OPT2_EQ);
+        scanf("%d", &option);
+
+        switch (option)
+        {
+        case 1:
+            fprintf(stdout, "You have selected: %s.\n", SUP_OPT1_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT1);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT1_EQ);
+            break;
+        case 2:
+            fprintf(stdout, "You have selected: %s.\n", SUP_OPT2_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT2);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT2_EQ);
+            break;
+        default:
+            printf("Invalid option. Please enter a valid number.\n");
+            flag=1;
+            break;
+        }
+    } while (flag);
+    
     printf("Write the suply:\n");
     scanf("%s", key);
     cjson_add_key_value_to_json_string(send_socket_buffer, K_KEY, key);
@@ -188,8 +198,11 @@ void get_supplies_options()
 }
 
 void clear_screen() {
+    fprintf(stdout, "...\n");
+    sleep(1);
     // ANSI secuence to clean the screen
-    printf("\033[2J\033[H");
+    // printf("\033[2J\033[H");
+    printf("\033[2J");
 }
 
 static void sign_handler(int signal)
@@ -204,4 +217,28 @@ static void sign_handler(int signal)
             break;
     }
     return;
+}
+
+void set_signal_handlers()
+{
+    struct sigaction sa;
+    sa.sa_handler = sign_handler;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+
+    if (sigaction(SIGINT, &sa, NULL) == -1)
+    {
+        perror("Couldn't set SIGINT handler");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTSTP, &sa, NULL) == -1)
+    {
+        perror("Couldn't set SIGTSTP handler");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &sa, NULL) == -1)
+    {
+        perror("Couldn't set SIGTERM handler");
+        exit(EXIT_FAILURE);
+    }
 }

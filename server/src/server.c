@@ -79,13 +79,16 @@ void run_server_ipv4(char* argv[])
     while (TRUE)
     {
         newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, (socklen_t*)&clilen);
-
+        if (newsockfd == -1)
+        {
+            fprintf(stderr, "Error accept: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
         pid = fork();
 
         if (pid == 0)
         {
             close(sockfd);
-
             run_server(newsockfd);
         }
         else
@@ -107,7 +110,7 @@ void run_server(int newsockfd)
         }
         printf("PROCESO %d. ", getpid());
         printf("Recibí: %s\n", recv_socket_buffer);
-        sleep(2);
+        sleep(1);
         // if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
         //     exit(EXIT_FAILURE);
         // }
@@ -116,53 +119,21 @@ void run_server(int newsockfd)
         {
         case CLOSE_CONNECTION:
             fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_);
-            if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
-            {
-                fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            close(newsockfd);
+            send_end_conn_message(newsockfd);
             sleep(5);
+            close(newsockfd);
             exit(EXIT_SUCCESS);
             break;
         case OPTION1_:
-            if (get_supply_status(&send_socket_buffer))
-            {
-                fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
-            {
-                fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            // Free memory
-            free_ptr(&send_socket_buffer);
+            send_supply_message(newsockfd);
             break;
         case OPTION2_:
             if (check_credentials())
             {
-                make_deneid_message();
-                if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
-                {
-                    fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
-                    exit(EXIT_FAILURE);
-                }
+                send_deneid_message(newsockfd);
                 break;
             }
-            if (set_supply_status(recv_socket_buffer, send_socket_buffer))
-            {
-                fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
-            {
-                fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            // Free memory
-            free_ptr(&send_socket_buffer);
+            set_and_send_suply_status(newsockfd);
             break;
 
         default:
@@ -172,6 +143,121 @@ void run_server(int newsockfd)
     }
 }
 
+void set_and_send_suply_status(int newsockfd)
+{
+    if (get_supply_status(&send_socket_buffer))
+    {
+        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (set_supply(recv_socket_buffer, send_socket_buffer))
+    {
+        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+    {
+        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    // Free memory
+    free_ptr(&send_socket_buffer);
+}
+
+void send_supply_message(int newsockfd)
+{
+    if (get_supply_status(&send_socket_buffer))
+    {
+        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+    {
+        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    // Free memory
+    free_ptr(&send_socket_buffer);
+}
+
+void send_deneid_message(int newsockfd)
+{   
+    send_socket_buffer = (char*)malloc(BUFFER_SIZE);
+    if (send_socket_buffer == NULL)
+    {
+        fprintf(stderr, "%s:%d: Error allocating memory.\n", __FILE__, __LINE__);
+    }
+    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_))
+    {
+        free_ptr(&send_socket_buffer);
+        fprintf(stderr, "%s:%d: Error json_add_key_value_to_json_string.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+    {
+        free_ptr(&send_socket_buffer);
+        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    free_ptr(&send_socket_buffer);
+}
+
+void send_end_conn_message(int newsockfd)
+{   
+    send_socket_buffer = (char*)malloc(BUFFER_SIZE);
+    if (send_socket_buffer == NULL)
+    {
+        fprintf(stderr, "%s:%d: Error allocating memory.\n", __FILE__, __LINE__);
+    }
+    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_))
+    {
+        free_ptr(&send_socket_buffer);
+        fprintf(stderr, "%s:%d: Error json_add_key_value_to_json_string.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
+    {
+        free_ptr(&send_socket_buffer);
+        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    free_ptr(&send_socket_buffer);
+}
+
+int set_supply()
+{
+    char* category;
+    char* key;
+    char* value;
+
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_SUP_COMMAND, &category))
+    {
+        free_ptr(&category);
+        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_KEY, &key))
+    {
+        free_ptr(&key);
+        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_VALUE, &value))
+    {
+        free_ptr(&value);
+        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (set_supply_status(category, key, value, &send_socket_buffer))
+    {
+        fprintf(stderr, "%s:%d: Error set_supply_status.\n", __FILE__, __LINE__);
+        return 1;
+    }
+    free_ptr(&category);
+    free_ptr(&key);
+    free_ptr(&value);
+    return 0;
+}
 void make_deneid_message()
 {
     fprintf(stdout, "Only the administrator can modify the data.\n");
@@ -185,39 +271,48 @@ void make_deneid_message()
 
 int check_credentials()
 {
-    char password[MAX_PASSWORD_LENGTH];
-    char username[MAX_USERNAME_LENGTH];
+    char* password;
+    char* username;
 
-    if (get_value_of_key_from_json_string(recv_socket_buffer, K_HOSTNAME, username))
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_HOSTNAME, &username))
     {
+        free_ptr(&username);
         fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
         return 1;
     }
-    if (get_value_of_key_from_json_string(recv_socket_buffer, K_PASSWORD, password))
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_PASSWORD, &password))
     {
+        free_ptr(&password);
         fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
         return 1;
     }
     if (strcmp(username, ADMIN) == 0 && strcmp(password, ADMIN) == 0)
     {
+        free_ptr(&password);
+        free_ptr(&username);
         return 0;
     }
+    free_ptr(&password);
+    free_ptr(&username);
     return 1;
 }
 
 int get_command()
 {
-    char c_buffer[C_SIZE];
-    if (get_value_of_key_from_json_string(recv_socket_buffer, K_COMMAND, c_buffer))
+    if (flag_handler)
+    {   
+        return 0;
+    }
+    char* c_buffer;
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_COMMAND, &c_buffer))
     {
+        free_ptr(&c_buffer);
         fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
         return -1;
     }
-    if (flag_handler)
-    {
-        return 0;
-    }
-    return atoi(c_buffer);
+    int r = atoi(c_buffer);
+    free_ptr(&c_buffer);
+    return r;
 }
 
 int connect_server_unix(int* sockfd, char* argv[])

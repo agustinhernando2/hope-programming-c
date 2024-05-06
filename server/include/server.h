@@ -35,52 +35,74 @@ char* send_socket_buffer = NULL;
 char recv_socket_buffer[BUFFER_SIZE];
 
 /**
- * @brief .
- *
- * .
+ * @brief Runs the server using IPv4.
  *
  * @param[in] argv Command-line arguments.
  */
 void run_server_ipv4(char* argv[]);
 
 /**
- * @brief .
- *
- * .
+ * @brief Runs the server using IPv6.
  *
  * @param[in] argv Command-line arguments.
  */
 void run_server_ipv6(char* argv[]);
 
 /**
- * @brief .
+ * @brief Connects to the server using IPv4.
  *
- * .
- *
+ * @param[out] sockfd Pointer to the socket file descriptor.
  * @param[in] argv Command-line arguments.
+ * @return 0 on success, -1 on error.
  */
 int connect_server_ipv4(int *sockfd, char* argv[]);
 
 /**
- * @brief .
+ * @brief Connects to the server using IPv6.
  *
- * .
- *
+ * @param[out] sockfd Pointer to the socket file descriptor.
  * @param[in] argv Command-line arguments.
+ * @return 0 on success, -1 on error.
  */
 int connect_server_ipv6(int *sockfd, char* argv[]);
 
 /**
- * @brief .
+ * @brief Run the server.
  *
- * .
- *
- * @param[in] argv Command-line arguments.
+ * @param[in] newsockfd The socket file descriptor for the connection.
  */
 void run_server(int newsockfd);
 
 /**
- * @brief get command
+ * @brief Modify and send the supply status to the client.
+ * only admin can do run this function.
+ * @param[in] newsockfd The socket file descriptor for the connection.
+ */
+void set_and_send_suply_status(int newsockfd);
+
+/**
+ * @brief Sends a supply status message to the client.
+ *
+ * @param[in] newsockfd The socket file descriptor for the connection.
+ */
+void send_supply_message(int newsockfd);
+
+/**
+ * @brief Send an end connection.
+ *
+ * @param[in] newsockfd The socket file descriptor for the connection.
+ */
+void send_end_conn_message(int newsockfd);
+
+/**
+ * @brief Send a denied message to the client..
+ *
+ * @param[in] newsockfd The socket file descriptor for the connection.
+ */
+void send_deneid_message(int newsockfd);
+
+/**
+ * @brief Gets the command from the user.
  *
  * @return 0 on error command, positive number on success.
  */
@@ -93,35 +115,23 @@ int get_command();
  */
 int check_credentials();
 
-/**
- * @brief do message with deneid operation.
- *
- */
-void make_deneid_message();
 
 /**
- * @brief .
+ * @brief Signal handler function.
  *
- * .
- *
- * @param[in] argv Command-line arguments.
+ * @param[in] signal The signal received.
  */
 static void sign_handler(int signal);
 
 /**
- * @brief .
- *
- * .
- *
- * @param[in] argv Command-line arguments.
+ * @brief Sets signal handlers for interrupt signals.
  */
 void set_signal_handlers();
 
+
 /**
- * @brief .
+ * @brief Set the supply.
  *
- * .
- *
- * @param[in] argv Command-line arguments.
+ * @return 0 on success, -1 on error.
  */
-int check_server_status();
+int set_supply();
