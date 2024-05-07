@@ -1,32 +1,46 @@
 #include <cjson_handler.h>
+#include <lib_handler.h>
 
 void print_cjson(char* cjson_buffer)
 {
     char* string = NULL;
     cJSON* cjson_object = cJSON_Parse(cjson_buffer);
+    if(cjson_object == NULL)
+    {
+        error_handler("Error parsing json.", __FILE__, __LINE__);
+        return;
+    }
     string = cJSON_Print(cjson_object);
-    printf("%s\n\n", string);
-    cJSON_Delete(cjson_object);
     if (string == NULL)
     {
-        fprintf(stderr, "%s:%d: Error printing json.\n", __FILE__, __LINE__);
+        cJSON_Delete(cjson_object);
+        error_handler("Error printing json.", __FILE__, __LINE__);
     }
+    printf("\n%s\n", string);
+    free_ptr(&string);
+    cJSON_Delete(cjson_object);
 }
 
 int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char** ptr_buffer)
 {
     if (cjson_buffer == NULL)
     {
-        fprintf(stderr, "%s:%d: Error null char*.\n", __FILE__, __LINE__);
+        error_handler("Error null char*.", __FILE__, __LINE__);
         return 1;
     }
     cJSON* cjson_object = cJSON_Parse(cjson_buffer);
     if (cjson_object == NULL)
     {
-        fprintf(stderr, "%s:%d: Error null cjson*.\n", __FILE__, __LINE__);
+        error_handler("Error null cjson*.", __FILE__, __LINE__);
         return 1;
     }
-    return get_value_of_key_from_json_object(cjson_object, key, ptr_buffer);
+    if(get_value_of_key_from_json_object(cjson_object, key, ptr_buffer))
+    {
+        cJSON_Delete(cjson_object);
+        return 1;
+    }
+    cJSON_Delete(cjson_object);
+    return 0;
 }
 
 int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char** ptr_buffer)
@@ -43,13 +57,12 @@ int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char** ptr
         buffer = (char*)malloc(strlen(json_value->valuestring) + 1);
         if (buffer == NULL)
         {
-            fprintf(stderr, "%s:%d: Error allocating memory.\n", __FILE__, __LINE__);
+            error_handler("Error allocating memory.", __FILE__, __LINE__);
             return 1;
         }
         // copy value to buffer
         strcpy(buffer, json_value->valuestring);
         *ptr_buffer = buffer;
-        cJSON_Delete(json_value);
         return 0;
     }
     // if the value is an object
@@ -58,26 +71,25 @@ int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char** ptr
         buffer = (char*)malloc(strlen(cJSON_Print(json_value)) + 1);
         if (buffer == NULL)
         {
-            fprintf(stderr, "%s:%d: Error allocating memory.\n", __FILE__, __LINE__);
+            error_handler("Error allocating memory.", __FILE__, __LINE__);
             return 1;
         }
         // copy value to buffer
         strcpy(buffer, cJSON_Print(json_value));
         *ptr_buffer = buffer;
-        cJSON_Delete(json_value);
         return 0;
     }
     return 0;
 }
 
-int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buffer)
+int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buffer, int flags)
 {
     cJSON* cjson_object;
     cJSON* value;
 
     if (buffer == NULL || key == NULL)
     {
-        fprintf(stderr, "%s:%d: Error params.\n", __FILE__, __LINE__);
+        error_handler("Error params.", __FILE__, __LINE__);
         return 1;
     }
 
@@ -88,94 +100,83 @@ int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buff
         cjson_object = cJSON_CreateObject();
         if (cjson_object == NULL)
         {
-            fprintf(stderr, "%s:%d: Error: Unable to create JSON object.\n", __FILE__, __LINE__);
+            error_handler("Error: Unable to create JSON object.", __FILE__, __LINE__);
             return 1;
         }
     }
 
-    // create a new json value
-    value = cJSON_CreateString(buffer);
-    if (value == NULL)
+    // check if buffer is a number
+    if ((flags & INTPARSE) && atof(buffer) != 0)
     {
-        cJSON_Delete(cjson_object); 
-        fprintf(stderr, "%s:%d: Error: Unable to create JSON string value.\n", __FILE__, __LINE__);
-        return 1;
+        value = cJSON_CreateNumber(atof(buffer));
+        if (value == NULL)
+        {
+            cJSON_Delete(cjson_object); 
+            error_handler("Error: Unable to create JSON number value.", __FILE__, __LINE__);
+            return 1;
+        }
+    }
+    // check if the buffer is an object
+    else if( flags & OBJPARSE)
+    {
+        value = cJSON_Parse(buffer);
+        if (value == NULL)
+        {
+            cJSON_Delete(cjson_object); 
+            error_handler("Error: Unable to create JSON object value.", __FILE__, __LINE__);
+            return 1;
+        }
+    }
+    else
+    {
+        value = cJSON_CreateString(buffer);
+        if (value == NULL)
+        {
+            cJSON_Delete(cjson_object); 
+            error_handler("Error: Unable to create JSON string value.", __FILE__, __LINE__);
+            return 1;
+        }
     }
 
-    if (cjson_add_key_item_to_json_object(cjson_object, key, value, cjson_buffer))
-    {
-        cJSON_Delete(cjson_object); 
-        return 1;
-    }
-
-    // value is already in the object, the free is not necessary
-    cJSON_Delete(cjson_object);
-    return 0;
-}
-
-
-
-int cjson_add_key_object_to_json_string(char* cjson_buffer, char* key, char* cjson_buffer_value)
-{
-    cJSON* cjson_object = NULL;
-
-    if (cjson_buffer_value == NULL || key == NULL)
-    {
-        fprintf(stderr, "%s:%d: Error params.\n", __FILE__, __LINE__);
-        return 1;
-    }
-
-    cjson_object = cJSON_Parse(cjson_buffer);
-    if (cjson_object == NULL)
-    {
-        cjson_object = cJSON_CreateObject();
-    }
-    cJSON* value = cJSON_Parse(cjson_buffer_value);
-    if(cjson_add_key_item_to_json_object(cjson_object, key, value, cjson_buffer))
-    {
-        return 1;
-    }
-
-    // value is already in the object, the free is not necessary
-    cJSON_Delete(cjson_object);
-    return 0;
-}
-
-int cjson_add_key_item_to_json_object(cJSON* cjson_object, char* key, cJSON* value, char* cjson_buffer)
-{
-    if (value == NULL)
-    {
-        fprintf(stderr, "%s:%d: Error adding a new key-value pair to JSON object. Unable to allocate memory.\n",
-                __FILE__, __LINE__);
-        return 1;
-    }
-    
-    if(is_key_in_json_object(cjson_object, key)){
-        fprintf(stderr, "%s:%d: Error the key is already exists.\n",
-                __FILE__, __LINE__);
-        return 0;
+    if (is_key_in_json_object(cjson_object, key)) {
+        if (flags & OVERRIDE) {
+            cJSON_DeleteItemFromObject(cjson_object, key);
+        } else {
+            cJSON_Delete(cjson_object);
+            cJSON_Delete(value);
+            error_handler("Error: The key already exists.", __FILE__, __LINE__);
+            return 0;
+        }
     }
     cJSON_AddItemToObject(cjson_object, key, value);
 
-    json_object_to_json_string(cjson_object, cjson_buffer);
+    if(json_object_to_json_string(cjson_object, cjson_buffer))
+    {
+        cJSON_Delete(cjson_object);
+        error_handler("Error: Unable to convert JSON object to string.", __FILE__, __LINE__);
+        return 1;
+    }
+    // value is already in the object, the free is not necessary
+    cJSON_Delete(cjson_object);
     return 0;
 }
 
 int json_object_to_json_string(cJSON* cjson_object, char* buffer)
 {
     if (buffer == NULL) {
-        fprintf(stderr, "Error: buffer is NULL\n");
+        error_handler("Error: buffer is NULL", __FILE__, __LINE__);
         return 1;
     }
 
     char* result = cJSON_Print(cjson_object);
     if (result == NULL)
     {
-        fprintf(stderr, "%s:%d: Error getting char buffer json.\n", __FILE__, __LINE__);
+        error_handler("Error getting char buffer json.", __FILE__, __LINE__);
         return 1;
     }
+    
     strcpy(buffer, result);
-    free(result);
+    free_ptr(&result);
     return 0;
 }
 
@@ -191,34 +192,37 @@ int is_key_in_json_object(cJSON* cjson_object, char* key)
 
 int is_key_in_json_buffer(char* cjson_buffer, char* key)
 {   
-    cJSON* cjson_object;
-
     if (cjson_buffer == NULL || key == NULL)
     {
-        fprintf(stderr, "%s:%d: Error params.\n", __FILE__, __LINE__);
+        error_handler("Error params.", __FILE__, __LINE__);
         return 0;
     }
 
     // parse json string or create a new object
-    cjson_object = cJSON_Parse(cjson_buffer);
+    printf("cjson_buffer: %s\n", cjson_buffer);
+    cJSON* cjson_object = cJSON_Parse(cjson_buffer);
     if (cjson_object == NULL)
     {
-        fprintf(stderr, "%s:%d: Error: cJSON_Parse.\n", __FILE__, __LINE__);
+        error_handler("Error: cJSON_Parse.", __FILE__, __LINE__);
         return 0;
     }
     // check if the key is in the object
-    int r = is_key_in_json_object(cjson_object, key);
-
-    cJSON_Delete(cjson_object);
-
-    return r;
+    if(is_key_in_json_object(cjson_object, key))
+    {
+        cJSON_Delete(cjson_object);
+        return 1;
+    }else
+    {
+        cJSON_Delete(cjson_object);
+        return 0;
+    }
 }
 
 int merge_json_strings(char* json_string1, char* json_string2, char* merged_json)
 {
     if (json_string1 == NULL || json_string2 == NULL || merged_json == NULL)
     {
-        fprintf(stderr, "%s:%d: Error null char*.\n", __FILE__, __LINE__);
+        error_handler("Error null char*.", __FILE__, __LINE__);
         return 1;
     }
     
@@ -227,7 +231,7 @@ int merge_json_strings(char* json_string1, char* json_string2, char* merged_json
     
     if (json_object1 == NULL || json_object2 == NULL)
     {
-        fprintf(stderr, "%s:%d: Error parsing json objects.\n", __FILE__, __LINE__);
+        error_handler("Error parsing json objects.", __FILE__, __LINE__);
         return 1;
     }
     
@@ -235,7 +239,7 @@ int merge_json_strings(char* json_string1, char* json_string2, char* merged_json
     
     if (merged_object == NULL)
     {
-        fprintf(stderr, "%s:%d: Error duplicating json object.\n", __FILE__, __LINE__);
+        error_handler("Error duplicating json object.", __FILE__, __LINE__);
         return 1;
     }
     
@@ -255,7 +259,7 @@ int merge_json_strings(char* json_string1, char* json_string2, char* merged_json
     
     if (merged_string == NULL)
     {
-        fprintf(stderr, "%s:%d: Error printing merged json.\n", __FILE__, __LINE__);
+        error_handler("Error printing merged json.", __FILE__, __LINE__);
         cJSON_Delete(merged_object);
         return 1;
     }

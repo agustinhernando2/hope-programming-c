@@ -106,8 +106,8 @@ void get_credentials()
 }
 void add_credentials()
 {
-    cjson_add_key_value_to_json_string(send_socket_buffer, K_HOSTNAME, username);
-    cjson_add_key_value_to_json_string(send_socket_buffer, K_PASSWORD, password);
+    cjson_add_key_value_to_json_string(send_socket_buffer, K_HOSTNAME, username, OVERRIDE);
+    cjson_add_key_value_to_json_string(send_socket_buffer, K_PASSWORD, password, OVERRIDE);
 }
 
 void get_options()
@@ -130,13 +130,13 @@ void get_options()
         case 1:
             fprintf(stdout, "You have selected: %s.\n", OPTION1_EQ);
             flag_get_supply = 1;
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION1);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION1_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION1, OVERRIDE);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION1_EQ, OVERRIDE);
             break;
         case 2:
             fprintf(stdout, "You have selected: %s.\n", OPTION2_EQ);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION2);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION2_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION2, OVERRIDE);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION2_EQ, OVERRIDE);
             get_supplies_options();
             break;
         case OPTION_END:
@@ -171,13 +171,13 @@ void get_supplies_options()
         {
         case 1:
             fprintf(stdout, "You have selected: %s.\n", SUP_OPT1_EQ);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT1);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT1_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT1, OVERRIDE);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT1_EQ, OVERRIDE);
             break;
         case 2:
             fprintf(stdout, "You have selected: %s.\n", SUP_OPT2_EQ);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT2);
-            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT2_EQ);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND, SUP_OPT2, OVERRIDE);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_SUP_COMMAND_EQ, SUP_OPT2_EQ, OVERRIDE);
             break;
         default:
             printf("Invalid option. Please enter a valid number.\n");
@@ -188,13 +188,13 @@ void get_supplies_options()
     
     printf("Write the suply:\n");
     scanf("%s", key);
-    cjson_add_key_value_to_json_string(send_socket_buffer, K_KEY, key);
+    cjson_add_key_value_to_json_string(send_socket_buffer, K_KEY, key, OVERRIDE);
 
     printf("Write the amount:\n");
     scanf("%d", &value);
     char value_str[10];
     sprintf(value_str, "%d", value);
-    cjson_add_key_value_to_json_string(send_socket_buffer, K_VALUE, value_str);
+    cjson_add_key_value_to_json_string(send_socket_buffer, K_VALUE, value_str, OVERRIDE);
 }
 
 void clear_screen() {
@@ -212,6 +212,11 @@ static void sign_handler(int signal)
             /* out of the loop*/
             printf("SIGINT called\n");
             flag_get_supply = 0;
+            break;
+        case SIGTSTP:
+            printf("SIGTSTP called\n");
+            // end connection
+            end_client_conn();
             break;
         default: 
             break;

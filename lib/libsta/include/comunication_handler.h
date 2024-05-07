@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <lib_handler.h>
 
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
@@ -47,6 +48,7 @@
 #define TRUE_ "1"
 #define FALSE 0
 #define FALSE_ "0"
+#define DELIMITER '\n'
 
 
 /**

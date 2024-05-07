@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        fprintf(stderr, "Error creating process 1. Errno: %s\n", strerror(errno));
+        error_handler("Error creating process 1", __FILE__, __LINE__); 
         exit(EXIT_FAILURE);
     }
 
@@ -81,7 +81,7 @@ void run_server_ipv4(char* argv[])
         newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, (socklen_t*)&clilen);
         if (newsockfd == -1)
         {
-            fprintf(stderr, "Error accept: %s\n", strerror(errno));
+            error_handler("Error accept", __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
         pid = fork();
@@ -105,7 +105,7 @@ void run_server(int newsockfd)
         memset(recv_socket_buffer, 0, BUFFER_SIZE);
         if (recv_message(newsockfd, recv_socket_buffer))
         {
-            fprintf(stderr, "NULL recv_socket_buffer, errno: %s", strerror(errno));
+            error_handler("Error recv_message", __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
         printf("PROCESO %d. ", getpid());
@@ -145,19 +145,14 @@ void run_server(int newsockfd)
 
 void set_and_send_suply_status(int newsockfd)
 {
-    if (get_supply_status(&send_socket_buffer))
+    if (set_supply())
     {
-        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-    if (set_supply(recv_socket_buffer, send_socket_buffer))
-    {
-        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        error_handler("Error set_supply", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
     {
-        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        error_handler("Error send_message", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     // Free memory
@@ -168,12 +163,12 @@ void send_supply_message(int newsockfd)
 {
     if (get_supply_status(&send_socket_buffer))
     {
-        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        error_handler("Error get_supply_status", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
     {
-        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        error_handler("Error send_message", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     // Free memory
@@ -185,18 +180,18 @@ void send_deneid_message(int newsockfd)
     send_socket_buffer = (char*)malloc(BUFFER_SIZE);
     if (send_socket_buffer == NULL)
     {
-        fprintf(stderr, "%s:%d: Error allocating memory.\n", __FILE__, __LINE__);
+        error_handler("Error allocating memory", __FILE__, __LINE__);
     }
-    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_))
+    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_, OVERRIDE))
     {
         free_ptr(&send_socket_buffer);
-        fprintf(stderr, "%s:%d: Error json_add_key_value_to_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error json_add_key_value_to_json_string", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
     {
         free_ptr(&send_socket_buffer);
-        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        error_handler("Error send_message", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     free_ptr(&send_socket_buffer);
@@ -206,19 +201,19 @@ void send_end_conn_message(int newsockfd)
 {   
     send_socket_buffer = (char*)malloc(BUFFER_SIZE);
     if (send_socket_buffer == NULL)
-    {
-        fprintf(stderr, "%s:%d: Error allocating memory.\n", __FILE__, __LINE__);
+    {   
+        error_handler("Error allocating memory", __FILE__, __LINE__);
     }
-    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_))
+    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_, OVERRIDE))
     {
         free_ptr(&send_socket_buffer);
-        fprintf(stderr, "%s:%d: Error json_add_key_value_to_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error json_add_key_value_to_json_string", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
     {
         free_ptr(&send_socket_buffer);
-        fprintf(stderr, "%s:%d: Error send_message.\n", __FILE__, __LINE__);
+        error_handler("Error send_message", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
     free_ptr(&send_socket_buffer);
@@ -230,27 +225,27 @@ int set_supply()
     char* key;
     char* value;
 
-    if (get_value_of_key_from_json_string(recv_socket_buffer, K_SUP_COMMAND, &category))
+    if (get_value_of_key_from_json_string(recv_socket_buffer, K_SUP_COMMAND_EQ, &category))
     {
         free_ptr(&category);
-        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error get_value_of_key_from_json_string", __FILE__, __LINE__);
         return 1;
     }
     if (get_value_of_key_from_json_string(recv_socket_buffer, K_KEY, &key))
     {
         free_ptr(&key);
-        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error get_value_of_key_from_json_string", __FILE__, __LINE__);
         return 1;
     }
     if (get_value_of_key_from_json_string(recv_socket_buffer, K_VALUE, &value))
     {
         free_ptr(&value);
-        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error get_value_of_key_from_json_string", __FILE__, __LINE__);
         return 1;
     }
     if (set_supply_status(category, key, value, &send_socket_buffer))
     {
-        fprintf(stderr, "%s:%d: Error set_supply_status.\n", __FILE__, __LINE__);
+        error_handler("Error set_supply_status", __FILE__, __LINE__);
         return 1;
     }
     free_ptr(&category);
@@ -263,10 +258,10 @@ void make_deneid_message()
     fprintf(stdout, "Only the administrator can modify the data.\n");
     if (get_supply_status(&send_socket_buffer))
     {
-        fprintf(stderr, "%s:%d: Error get_supply_status.\n", __FILE__, __LINE__);
+        error_handler("Error get_supply_status", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
-    cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_);
+    cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_, OVERRIDE);
 }
 
 int check_credentials()
@@ -277,13 +272,13 @@ int check_credentials()
     if (get_value_of_key_from_json_string(recv_socket_buffer, K_HOSTNAME, &username))
     {
         free_ptr(&username);
-        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error get_value_of_key_from_json_string", __FILE__, __LINE__);
         return 1;
     }
     if (get_value_of_key_from_json_string(recv_socket_buffer, K_PASSWORD, &password))
     {
         free_ptr(&password);
-        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error get_value_of_key_from_json_string", __FILE__, __LINE__);
         return 1;
     }
     if (strcmp(username, ADMIN) == 0 && strcmp(password, ADMIN) == 0)
@@ -307,7 +302,7 @@ int get_command()
     if (get_value_of_key_from_json_string(recv_socket_buffer, K_COMMAND, &c_buffer))
     {
         free_ptr(&c_buffer);
-        fprintf(stderr, "%s:%d: Error get_value_of_key_from_json_string.\n", __FILE__, __LINE__);
+        error_handler("Error get_value_of_key_from_json_string", __FILE__, __LINE__);
         return -1;
     }
     int r = atoi(c_buffer);
@@ -322,7 +317,7 @@ int connect_server_unix(int* sockfd, char* argv[])
 
     if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        fprintf(stderr, "%s:%d: Error socket.\n", __FILE__, __LINE__);
+        error_handler("Error socket", __FILE__, __LINE__);
         return 1;
     }
 
@@ -333,14 +328,14 @@ int connect_server_unix(int* sockfd, char* argv[])
 
     if (bind(*sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        fprintf(stderr, "%s:%d: Bind error server unix. errno: %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error bind", __FILE__, __LINE__);
         return 1;
     }
     printf("Proceso: %d - socket disponible: %s\n", getpid(), serv_addr.sun_path);
 
     if ((listen(*sockfd, 100)) == -1)
     {
-        fprintf(stderr, "%s:%d: Error LISTEN: %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error listen", __FILE__, __LINE__);
         return 1;
     }
     return 0;
@@ -352,7 +347,7 @@ int connect_server_ipv4(int* sockfd, char* argv[])
 
     if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        fprintf(stderr, "%s:%d: Error socket.\n", __FILE__, __LINE__);
+        error_handler("Error socket", __FILE__, __LINE__);
         return 1;
     }
 
@@ -364,7 +359,7 @@ int connect_server_ipv4(int* sockfd, char* argv[])
 
     if (bind(*sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        fprintf(stderr, "%s:%d: Bind error server unix. IPv4: %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error bind", __FILE__, __LINE__);
         return 1;
     }
 
@@ -372,7 +367,7 @@ int connect_server_ipv4(int* sockfd, char* argv[])
 
     if ((listen(*sockfd, 100)) == -1)
     {
-        fprintf(stderr, "%s:%d: Error LISTEN: %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error listen", __FILE__, __LINE__);
         return 1;
     }
     return 0;
@@ -384,7 +379,7 @@ int connect_server_ipv6(int* sockfd, char* argv[])
 
     if ((*sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0)
     {
-        fprintf(stderr, "%s:%d: Error socket.\n", __FILE__, __LINE__);
+        error_handler("Error socket", __FILE__, __LINE__);
         return 1;
     }
 
@@ -396,7 +391,7 @@ int connect_server_ipv6(int* sockfd, char* argv[])
 
     if (bind(*sockfd, (struct sockaddr*)&serv_addr6, sizeof(serv_addr6)) < 0)
     {
-        fprintf(stderr, "%s:%d: Bind error server ipv6. %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error bind", __FILE__, __LINE__);
         return 1;
     }
 
@@ -404,7 +399,7 @@ int connect_server_ipv6(int* sockfd, char* argv[])
 
     if (listen(*sockfd, 100) == -1)
     {
-        fprintf(stderr, "%s:%d: Error LISTEN: %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error listen", __FILE__, __LINE__);
         return 1;
     }
     return 0;

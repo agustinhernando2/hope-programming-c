@@ -8,6 +8,11 @@
 
 /* Libraries*/
 #include <cJSON.h>
+#include <lib_handler.h>
+
+#define INTPARSE 0b010
+#define OBJPARSE 0b100
+#define OVERRIDE 0b001
 
 /**
  * @brief Print a JSON character buffer
@@ -25,9 +30,10 @@ void print_cjson(char* buffer);
  * @param key Content of the key.
  * @param value Content of the value.
  * @param cjson_buffer Content of the JSON character buffer result.
+ * @param flags OVERRIDE to override is already exist, INTPARSE to try save int value.
  * @return 0 if successful, 1 in case of an error.
  */
-int cjson_add_key_item_to_json_object(cJSON* cjson_object, char* key, cJSON* value, char* cjson_buffer);
+int cjson_add_key_item_to_json_object(cJSON* cjson_object, char* key, cJSON* value, char* cjson_buffer, int flags);
 
 /**
  * @brief Add key-value pair to a JSON character buffer.
@@ -37,21 +43,10 @@ int cjson_add_key_item_to_json_object(cJSON* cjson_object, char* key, cJSON* val
  * @param cjson_buffer Pointer to the JSON character buffer to which the key-value pair will be added.
  * @param key Content of the key.
  * @param buffer Content of the value.
+ * @param flags OVERRIDE to override is already exist.
  * @return 0 if successful, 1 in case of an error.
  */
-int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buffer);
-
-/**
- * @brief Add key-value pair to a JSON character buffer.
- *
- * This function adds a key-value pair to a JSON character buffer.
- *
- * @param cjson_buffer Pointer to the JSON character buffer to which the key-value pair will be added.
- * @param key Content of the key.
- * @param cjson_buffer_value Content of the JSON character buffer value.
- * @return 0 if successful, 1 in case of an error.
- */
-int cjson_add_key_object_to_json_string(char* cjson_buffer, char* key, char* cjson_buffer_value);
+int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buffer, int flags);
 
 /**
  * @brief - get value of a JSON object key

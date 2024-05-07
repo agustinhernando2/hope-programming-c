@@ -1,1 +1,32 @@
-{"alerts":{"north_entry":1,"east_entry":1,"west_entry":1,"south_entry":1},"supplies":{"food":{"meat":100,"vegetables":200,"fruits":150,"water":1000},"medicine":{"antibiotics":1,"analgesics":100,"bandages":100}},"emergency":{"last_keepalived":"Wed Mar 07 12:27:29 2012","last_event":"Server failure/Server shutdown"}}
+{
+	"alerts":	{
+		"north_entry":	1,
+		"east_entry":	1,
+		"west_entry":	1,
+		"south_entry":	1
+	},
+	"emergency":	{
+		"last_keepalived":	"Wed Mar 07 12:27:29 2012",
+		"last_event":	"Server failure/Server shutdown"
+	},
+	"supplies":	{
+		"food":	{
+			"vegetables":	200,
+			"fruits":	150,
+			"milk":	10,
+			"fuit":	100,
+			"egg":	100,
+			"burguer":	10,
+			"sanguche":	99,
+			"meat":	80
+		},
+		"medicine":	{
+			"antibiotics":	1,
+			"analgesics":	100,
+			"bandages":	100,
+			"tafirol_plus":	10,
+			"tafirol":	1000,
+			"tafirol_capsula":	100
+		}
+	}
+}

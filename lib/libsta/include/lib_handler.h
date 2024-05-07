@@ -2,6 +2,7 @@
 #include <stdio.h>         
 #include <stdlib.h>        
 #include <string.h> 
+#include <errno.h>
 
 /**
  * @brief Reads the content of a file and stores it in a buffer.
@@ -28,3 +29,12 @@ int write_file(char* filename, char* buffer);
  * @param json_file_buffer: Pointer free.
  */
 void free_ptr(char** json_file_buffer);
+
+/**
+ * @brief Handle error
+ *     
+ * @param error_message: Error message to print.
+ * @param error_number: Error number to print.
+ */
+void error_handler(const char* error_message, char* file, int line);
+

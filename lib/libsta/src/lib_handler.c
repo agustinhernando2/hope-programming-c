@@ -1,4 +1,4 @@
-#include <r_w_handler.h>  
+#include <lib_handler.h>  
 
 int read_file(char* filename, char** buffer)
 {
@@ -11,10 +11,21 @@ int read_file(char* filename, char** buffer)
         return 1;
     }
     // Get size of the txt file
-    fseek(file, 0, SEEK_END);
+    if(fseek(file, 0, SEEK_END))
+    {
+        fclose(file);
+        fprintf(stderr, "%s:%d: Error seeking file\n",__FILE__, __LINE__);
+        return 1;
+    }
+    // Get the size of the file
     long fsize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
+    // Check if the file is empty
+    if(fseek(file, 0, SEEK_SET))
+    {
+        fclose(file);
+        fprintf(stderr, "%s:%d: Error seeking file\n",__FILE__, __LINE__);
+        return 1;
+    }
     // Store the content of the file
     char *string = malloc(fsize + 1);
     if (string == NULL) {
@@ -73,4 +84,12 @@ void free_ptr(char** json_file_buffer)
         free(*json_file_buffer);
         *json_file_buffer = NULL;
     }
+}
+
+void error_handler(const char* error_message, char* file, int line) {
+    fprintf(stderr, "%s:%d: Error: %s", file, line, error_message);
+    if (errno != 0) {
+        fprintf(stderr, " Error number: %d", errno);
+    }
+    fprintf(stderr, "\n");
 }

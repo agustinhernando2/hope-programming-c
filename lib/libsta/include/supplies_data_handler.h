@@ -1,10 +1,11 @@
 #pragma once
 
-#include <r_w_handler.h>
+#include <lib_handler.h>
 #include <cjson_handler.h>
 
 #define JSON_FILE_PATH "data/state_summary.json"
 #define SUPPLIES "supplies" 
+#define TRUE 1 
 /**
  * @brief - get supplies json
  *      Load the supplies json file into the supplies_buffer.
