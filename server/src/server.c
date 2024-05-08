@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     // }
 
     while (pid && child_process)
-    {
+    {   
         pid_c = wait(&status);
         child_process--;
         if (WIFEXITED(status))
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
 void run_server_ipv4(char* argv[])
 {
-    int newsockfd, clilen, pid;
+    int clilen, pid;
     struct sockaddr_in cli_addr;
 
     if (connect_server_ipv4(&sockfd, argv))
@@ -87,9 +87,34 @@ void run_server_ipv4(char* argv[])
         pid = fork();
 
         if (pid == 0)
-        {
+        {   
             close(sockfd);
-            run_server(newsockfd);
+
+            // Create pipe
+            if (pipe(pipe_fd) == -1) {
+                perror("pipe");
+                exit(EXIT_FAILURE);
+            }
+
+            // Crate child process
+            pid_t pid_ = fork();
+            if (pid_ == -1) {
+                // Error 
+                perror("fork");
+                exit(EXIT_FAILURE);
+            } else if (pid_ == 0) {
+                // child
+                if(run_emergency_handler(pipe_fd))
+                {
+                    error_handler("Error run_emergency_handler", __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                }
+                exit(EXIT_SUCCESS);
+            } else {
+                // parent
+                close(pipe_fd[1]);  // Close write end
+                run_server(newsockfd);
+            }
         }
         else
         {
@@ -99,7 +124,7 @@ void run_server_ipv4(char* argv[])
     }
 }
 void run_server(int newsockfd)
-{
+{   
     while (TRUE)
     {
         memset(recv_socket_buffer, 0, BUFFER_SIZE);
@@ -111,18 +136,11 @@ void run_server(int newsockfd)
         printf("PROCESO %d. ", getpid());
         printf("Recibí: %s\n", recv_socket_buffer);
         sleep(1);
-        // if (send_message(socket_buffer, BUFFER_SIZE, newsockfd)){
-        //     exit(EXIT_FAILURE);
-        // }
 
         switch (get_command())
         {
         case CLOSE_CONNECTION:
-            fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
-            send_end_conn_message(newsockfd);
-            sleep(5);
-            close(newsockfd);
-            exit(EXIT_SUCCESS);
+            end_conn(newsockfd);
             break;
         case OPTION1_:
             send_supply_message(newsockfd);
@@ -141,6 +159,48 @@ void run_server(int newsockfd)
             break;
         };
     }
+}
+
+void end_conn(int newsockfd)
+{
+    // Configurar el extremo de lectura del pipe en modo no bloqueante
+    int flags = fcntl(pipe_fd[0], F_GETFL);
+    if (flags == -1) {
+        perror("fcntl");
+        exit(EXIT_FAILURE);
+    }
+    if (fcntl(pipe_fd[0], F_SETFL, flags | O_NONBLOCK) == -1) {
+        perror("fcntl");
+        exit(EXIT_FAILURE);
+    }
+
+    // Leer datos del pipe en el proceso padre
+    ssize_t bytes_read;
+    bytes_read = read(pipe_fd[0], buffer, sizeof(buffer));
+    if (bytes_read == -1) {
+        perror("read");
+        // Si no hay datos disponibles para leer, continuar sin bloquear
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            printf("No hay datos disponibles para leer en este momento.\n");
+        } else {
+            close(pipe_fd[0]); 
+            close(newsockfd);
+            send_end_conn_message(newsockfd);
+            exit(EXIT_FAILURE);
+        }
+    } else if (bytes_read > 0) {
+        printf("Mensaje recibido en el proceso padre: %s\n", buffer);
+    }
+
+    close(pipe_fd[0]); // Cerrar el extremo de lectura del pipe en el padre
+
+    fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
+    send_end_conn_message(newsockfd);
+    sleep(5);
+    close(newsockfd);
+    // send end of connection to parent pid
+    kill(getppid(), SIGTSTP);
+    exit(EXIT_SUCCESS);
 }
 
 void set_and_send_suply_status(int newsockfd)
@@ -402,6 +462,7 @@ int connect_server_ipv6(int* sockfd, char* argv[])
         error_handler("Error listen", __FILE__, __LINE__);
         return 1;
     }
+
     return 0;
 }
 
@@ -416,10 +477,14 @@ static void sign_handler(int signal)
         printf("\
             The server is not accepting any more connections.\
             \nThe received messages will close the client connection.\n");
+        end_conn(newsockfd);
         break;
     case SIGTSTP:
         /* send end to client */
         printf("SIGTSTP called\n");
+        printf("\
+            The server connection is close.\n");
+        sleep(5);
         exit(EXIT_SUCCESS);
         break;
     default:

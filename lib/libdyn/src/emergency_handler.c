@@ -1,9 +1,20 @@
 #include <emergency_handler.h>
-#include <stdio.h>
-#include <string.h>
 
-int shared_lib_function(char* msg)
+
+int run_emergency_handler(int* pipe_fd)
 {
-    printf("Hi, I'm a shared lib that receives '%s', and return '%ld'.\n", msg, strlen(msg));
-    return strlen(msg);
+    // close read end
+    close(pipe_fd[0]);  
+    sleep(10);
+    // write to pipe
+    char message[] = "Server failure. Emergency notification sent to all connected clients.";
+    if (write(pipe_fd[1], message, sizeof(message)) == -1) {
+        perror("write");
+        return 1;
+    }
+    // send SIGINT to parent
+    kill(getppid(), SIGINT);
+    // Close write end
+    close(pipe_fd[1]);  
+    return 0;
 }

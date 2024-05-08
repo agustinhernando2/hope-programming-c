@@ -16,6 +16,7 @@
 #include <emergency_handler.h>
 #include <critical_handler.h>
 #include <comunication_handler.h>
+#include <emergency_handler.h>
 #include <supplies_data_handler.h>
 #include <lib_handler.h>
 #include <cjson_handler.h>
@@ -30,7 +31,12 @@
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
 volatile sig_atomic_t flag_handler = 0;
+
+int pipe_fd[2];
+char buffer[100];
+
 int sockfd;
+int newsockfd;
 char* send_socket_buffer = NULL;
 char recv_socket_buffer[BUFFER_SIZE];
 
@@ -72,6 +78,8 @@ int connect_server_ipv6(int *sockfd, char* argv[]);
  * @param[in] newsockfd The socket file descriptor for the connection.
  */
 void run_server(int newsockfd);
+
+void end_conn(int newsockfd);
 
 /**
  * @brief Modify and send the supply status to the client.

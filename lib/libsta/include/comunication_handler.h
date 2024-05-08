@@ -41,7 +41,7 @@
 #define K_KEY "key"
 
 #define C_SIZE 50
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 1024
 #define MESSAGE "message"
 #define END "end"
 #define TRUE 1

@@ -10,6 +10,14 @@
 		"last_event":	"Server failure/Server shutdown"
 	},
 	"supplies":	{
+		"medicine":	{
+			"antibiotics":	1,
+			"analgesics":	100,
+			"bandages":	100,
+			"tafirol_plus":	10,
+			"tafirol":	1000,
+			"tafirol_capsula":	100
+		},
 		"food":	{
 			"vegetables":	200,
 			"fruits":	150,
@@ -18,15 +26,9 @@
 			"egg":	100,
 			"burguer":	10,
 			"sanguche":	99,
-			"meat":	80
-		},
-		"medicine":	{
-			"antibiotics":	1,
-			"analgesics":	100,
-			"bandages":	100,
-			"tafirol_plus":	10,
-			"tafirol":	1000,
-			"tafirol_capsula":	100
+			"meat":	80,
+			"burguers":	100,
+			"NOMBRE":	123
 		}
 	}
 }

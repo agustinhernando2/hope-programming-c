@@ -4,13 +4,15 @@ int main(int argc, char* argv[])
 {
     set_signal_handlers();
 
-    if (argc < 3)
+    if (argc < 4)
     {
-        fprintf(stderr, "Uso %s <host> <puerto>\n", argv[0]);
+        fprintf(stderr, "Uso %s <host> <puerto> <IPV> <UDP/TCP>\n", argv[0]);
         exit(EXIT_SUCCESS);
     }
     puerto = (uint16_t)atoi(argv[2]);
     server = gethostbyname(argv[1]);
+    
+    get_credentials();
 
     if (try_connect_server())
     {
@@ -18,7 +20,6 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    get_credentials();
 
     while (TRUE)
     {
@@ -85,6 +86,7 @@ int recv_and_check_message()
     
     return 0;
 }
+
 void end_client_conn()
 {
     close(sockfd);
