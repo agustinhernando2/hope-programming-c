@@ -4,27 +4,57 @@ int main(int argc, char* argv[])
 {
     set_signal_handlers();
 
-    if (argc < 4)
+    if (argc < 3)
     {
-        fprintf(stderr, "Uso %s <host> <puerto> <IPV> <UDP/TCP>\n", argv[0]);
+        fprintf(stderr, "Uso %s <host> IPV\n", argv[0]);
+        fprintf(stderr, "Example %s localhost 4\n", argv[0]);
+        fprintf(stderr, "Example %s localhost 6\n", argv[0]);
         exit(EXIT_SUCCESS);
     }
-    puerto = (uint16_t)atoi(argv[2]);
     server = gethostbyname(argv[1]);
-    
-    get_credentials();
 
-    if (try_connect_server())
+    get_credentials();
+    
+    int connection_type;
+
+    if(check_credentials()){
+        // if the user is admin, the connection will be TCP
+        connection_type = SOCK_STREAM;
+    }
+    else
     {
-        fprintf(stderr, "%s:%d: Error to connect: %s\n", __FILE__, __LINE__, strerror(errno));
+        // if the user is not admin, the connection will be UDP
+        fprintf(stdout, "Welcome Normal user\n");
+        connection_type = SOCK_DGRAM;
+        flag_get_supply = 1;
+        skip_option = 0;
+    }
+
+    int ip_version = atoi(argv[2]);
+
+    if (try_connect_server(connection_type, argv[1], ip_version))
+    {
+        error_handler("Error to connect",__FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
 
 
     while (TRUE)
     {
-        get_options();
-        add_credentials();
+        if(skip_option == 1)
+        {
+            memset(send_socket_buffer, 0, BUFFER_SIZE);
+            get_options();
+            add_credentials();
+        }
+        else
+        {
+            // add command to receive the supplies
+            memset(send_socket_buffer, 0, BUFFER_SIZE);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND, OPTION1, OVERRIDE);
+            cjson_add_key_value_to_json_string(send_socket_buffer, K_COMMAND_EQ, OPTION1_EQ, OVERRIDE);
+        }
+        skip_option = 1;
         send_message_to_server();
         recv_and_check_message();
     }
@@ -35,31 +65,57 @@ void send_message_to_server()
 {
     if (send_message(send_socket_buffer, BUFFER_SIZE, sockfd))
     {
-        fprintf(stderr, "%s:%d: Error send_message. errno: %s\n", __FILE__, __LINE__, strerror(errno));
+        error_handler("Error send_message",__FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
 }
 
-int try_connect_server()
+int check_credentials()
 {
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
-    memset((char*)&serv_addr, '0', sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-
-    /*h_addr_list direccion IP a la que se va a conectar el servidor*/
-    bcopy((char*)server->h_addr_list[0], (char*)&serv_addr.sin_addr.s_addr, (size_t)server->h_length);
-    serv_addr.sin_port = htons((uint16_t)puerto);
-    if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
+    if (strcmp(username, ADMIN) == 0 && strcmp(password, ADMIN) == 0)
     {
+        fprintf(stdout, "Welcome Admin\n");
+        sleep(1);
         return 1;
     }
     return 0;
 }
+
+int try_connect_server(int type, const char* ip_address, int ipv)
+{
+    switch (ipv)
+    {
+    case IPV4:
+        if (connect_client_ipv4(&sockfd, IP_ADDR_V4, type))
+        {
+            error_handler("Error to connect to the server",__FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+            return 1;
+        }
+        break;
+    case IPV6:
+        if (connect_client_ipv6(&sockfd, IP_ADDR_V6, type))
+        {
+            error_handler("Error to connect to the server",__FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+            return 1;
+        }
+        break;
+    default:
+        fprintf(stderr, "Uso <host> IPV\n");
+        fprintf(stderr, "Example client localhost 4\n");
+        fprintf(stderr, "Example client localhost 6\n");
+        exit(EXIT_SUCCESS);
+        break;
+    }
+}
+
+
+
 int recv_and_check_message()
 {
     memset(recv_socket_buffer, 0, BUFFER_SIZE);
-    recv_message(sockfd, recv_socket_buffer);
+    recv_tcp_message(sockfd, recv_socket_buffer);
 
     if (is_key_in_json_buffer(recv_socket_buffer, K_ACC_DENEID))
     {
@@ -68,7 +124,7 @@ int recv_and_check_message()
         fprintf(stdout, "Access denied\n");
         sleep(2);
     }
-    if (is_key_in_json_buffer(recv_socket_buffer, K_ACC_DENEID))
+    if (is_key_in_json_buffer(recv_socket_buffer, K_END))
     {
         end_client_conn();
     }
@@ -114,9 +170,8 @@ void add_credentials()
 
 void get_options()
 {
-    int option;
-    memset(send_socket_buffer, 0, BUFFER_SIZE);
-    int flag;
+    int option = 0;
+    int flag = 0;
     do
     {
         clear_screen();
@@ -148,6 +203,7 @@ void get_options()
         default:
             printf("Invalid option. Please enter a valid number.\n");
             flag=1;
+            option=0;
             break;
         }
     }while (flag);
@@ -155,11 +211,8 @@ void get_options()
 
 void get_supplies_options()
 {
-    int option;
-    int value;
+    int option = 0, flag = 0, value = 0;
     char key[MAX_K_V_SUP_LENGHT];
-
-    int flag;
     do
     {
         clear_screen();
@@ -184,6 +237,7 @@ void get_supplies_options()
         default:
             printf("Invalid option. Please enter a valid number.\n");
             flag=1;
+            option = 0;
             break;
         }
     } while (flag);
@@ -214,6 +268,7 @@ static void sign_handler(int signal)
             /* out of the loop*/
             printf("SIGINT called\n");
             flag_get_supply = 0;
+            skip_option = 1;
             break;
         case SIGTSTP:
             printf("SIGTSTP called\n");

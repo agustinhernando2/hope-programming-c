@@ -102,3 +102,10 @@ int is_key_in_json_object(cJSON* cjson_object, char* key);
  * @return 1 if the key is in the JSON character buffer, 0 otherwise.
  */
 int is_key_in_json_buffer(char* cjson_buffer, char* key);
+
+/**
+ * @brief Frees the memory allocated
+ *     
+ * @param json: cJSON free.
+ */
+void free_cjson_ptr(cJSON** json);

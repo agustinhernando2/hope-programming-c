@@ -13,20 +13,30 @@ int set_supply_status(char* category, char* key, char* value, char** supplies_bu
         return 1;
     }
     // get the value of the key supplies, ex {"supplies":{...}}
-    get_value_of_key_from_json_string(*supplies_buffer, SUPPLIES, &value_of_supply_key);
+    if(get_value_of_key_from_json_string(*supplies_buffer, SUPPLIES, &value_of_supply_key))
+    {
+        return 1;
+    }
     // get the value of the key category, ex {"food":{...}}
-    get_value_of_key_from_json_string(value_of_supply_key, category, &value_of_category);
+    if(get_value_of_key_from_json_string(value_of_supply_key, category, &value_of_category))
+    {
+        return 1;
+    }
     // add the key-value pair to the category object, ex {"food":{"water":120 ...}} and override if already exist
-    cjson_add_key_value_to_json_string(value_of_category, key, value, OVERRIDE|INTPARSE);
+    if(cjson_add_key_value_to_json_string(value_of_category, key, value, OVERRIDE|INTPARSE))
+    {
+        return 1;
+    }
     // update the category object
-    cjson_add_key_value_to_json_string(value_of_supply_key, category, value_of_category, OVERRIDE|OBJPARSE);
+    if(cjson_add_key_value_to_json_string(value_of_supply_key, category, value_of_category, OVERRIDE|OBJPARSE))
+    {
+        return 1;
+    }
     // update the supplies object
-    cjson_add_key_value_to_json_string(*supplies_buffer, SUPPLIES, value_of_supply_key, OVERRIDE|OBJPARSE);
-
-    // free the memory
-    // free_ptr(&value_of_category);
-    free_ptr(&value_of_supply_key);
-
+    if(cjson_add_key_value_to_json_string(*supplies_buffer, SUPPLIES, value_of_supply_key, OVERRIDE|OBJPARSE))
+    {
+        return 1;
+    }
     // write the updated supplies object to the file
     return write_file(JSON_FILE_PATH, *supplies_buffer);
 }

@@ -1,10 +1,4 @@
 {
-	"alerts":	{
-		"north_entry":	1,
-		"east_entry":	1,
-		"west_entry":	1,
-		"south_entry":	1
-	},
 	"emergency":	{
 		"last_keepalived":	"Wed Mar 07 12:27:29 2012",
 		"last_event":	"Server failure/Server shutdown"
@@ -13,22 +7,22 @@
 		"medicine":	{
 			"antibiotics":	1,
 			"analgesics":	100,
-			"bandages":	100,
-			"tafirol_plus":	10,
-			"tafirol":	1000,
-			"tafirol_capsula":	100
+			"bandages":	100
 		},
 		"food":	{
 			"vegetables":	200,
 			"fruits":	150,
-			"milk":	10,
-			"fuit":	100,
-			"egg":	100,
-			"burguer":	10,
-			"sanguche":	99,
-			"meat":	80,
-			"burguers":	100,
-			"NOMBRE":	123
+			"COMIDA":	1,
+			"comida":	123,
+			"AAA":	123,
+			"agua2":	123,
+			"agua":	22
 		}
+	},
+	"alerts":	{
+		"NORTH":	46,
+		"EAST":	42,
+		"WEST":	42,
+		"SOUTH":	37
 	}
 }

@@ -3,6 +3,7 @@
 #include <stdlib.h>        
 #include <string.h> 
 #include <errno.h>
+#include <time.h>
 
 /**
  * @brief Reads the content of a file and stores it in a buffer.
@@ -38,3 +39,12 @@ void free_ptr(char** json_file_buffer);
  */
 void error_handler(const char* error_message, char* file, int line);
 
+/**
+ * @brief Generate new line log
+*/
+int generate_log(char* filename, char* timestamp, char* message);
+
+/**
+ * @brief Set the timestamp
+*/
+void set_timestamp(char* timestamp, int t_size);

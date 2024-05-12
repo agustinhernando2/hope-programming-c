@@ -3,20 +3,16 @@
 int main(int argc, char* argv[])
 {
     set_signal_handlers();
+    create_message_queue();
     int status;
     pid_t pid, pid_c;
     int child_process = 0;
 
-    if (argc < 3)
-    {
-        fprintf(stderr, "Uso: %s <puerto> <unix_name>\n", argv[0]);
-        return 0;
-    }
-
+    // Fork Modulo de alerta
     pid = fork();
     if (pid == 0)
     {
-        run_server_ipv4(argv);
+        run_alert_module(msg_id);
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)
@@ -25,28 +21,99 @@ int main(int argc, char* argv[])
     }
     else
     {
-        error_handler("Error creating process 1", __FILE__, __LINE__); 
+        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    // pid = fork();
-    // if (pid == 0)
-    // {
-    //     run_server_ipv6(argv);
-    //     exit(EXIT_SUCCESS);
-    // }
-    // else if (pid > 0)
-    // {
-    //     child_process++;
-    // }
-    // else
-    // {
-    //     fprintf(stderr,"Error creating process 2. Errno: %s\n", strerror(errno));
-    //     exit(EXIT_FAILURE);
-    // }
+    // Fork listener alert temperature
+    pid = fork();
+    if (pid == 0)
+    {
+        alert_and_emergency_listener(msg_id);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    
+    // Fork server connection ipv4 TCP
+    pid = fork();
+    if (pid == 0)
+    {
+        run_server_ipv4(SOCK_STREAM, AF_INET);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        error_handler("Error creating process 1", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork server connection ipv4 UDP
+    pid = fork();
+    if (pid == 0)
+    {
+        run_server_ipv4(SOCK_DGRAM, AF_INET);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        error_handler("Error creating process 1", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork server connection ipv6 TCP
+    pid = fork();
+    if (pid == 0)
+    {
+        run_server_ipv6(SOCK_STREAM, AF_INET6);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork server connection ipv6 UDP
+    pid = fork();
+    if (pid == 0)
+    {
+        run_server_ipv6(SOCK_DGRAM, AF_INET6);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    
 
     while (pid && child_process)
-    {   
+    {
         pid_c = wait(&status);
         child_process--;
         if (WIFEXITED(status))
@@ -66,71 +133,196 @@ int main(int argc, char* argv[])
     exit(EXIT_SUCCESS);
 }
 
-void run_server_ipv4(char* argv[])
+int create_message_queue()
 {
-    int clilen, pid;
-    struct sockaddr_in cli_addr;
-
-    if (connect_server_ipv4(&sockfd, argv))
+    // Create a unique key
+    key_t key = ftok(K_MSG, 'm');
+    if (key == -1) {
+        error_handler("Error ftok", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    msg_id = msgget(key, IPC_CREAT | 0666);
+    printf("QID = %d\n", msg_id);
+    if (msg_id == -1)
     {
+        error_handler("msgget error", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
 
+    return 0;
+}
+
+void alert_and_emergency_listener(int msg_id)
+{
+    char* message = NULL;
+    mess_t send_buffer;
+
+    int r = 0;
     while (TRUE)
     {
-        newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, (socklen_t*)&clilen);
-        if (newsockfd == -1)
+        if (msgrcv(msg_id, &send_buffer, sizeof(send_buffer), 1, 0) == -1)
         {
-            error_handler("Error accept", __FILE__, __LINE__);
+            perror("msgrcv error");
             exit(EXIT_FAILURE);
+            continue;
         }
-        pid = fork();
-
-        if (pid == 0)
-        {   
-            close(sockfd);
-
-            // Create pipe
-            if (pipe(pipe_fd) == -1) {
-                perror("pipe");
-                exit(EXIT_FAILURE);
-            }
-
-            // Crate child process
-            pid_t pid_ = fork();
-            if (pid_ == -1) {
-                // Error 
-                perror("fork");
-                exit(EXIT_FAILURE);
-            } else if (pid_ == 0) {
-                // child
-                if(run_emergency_handler(pipe_fd))
-                {
-                    error_handler("Error run_emergency_handler", __FILE__, __LINE__);
-                    exit(EXIT_FAILURE);
-                }
-                exit(EXIT_SUCCESS);
-            } else {
-                // parent
-                close(pipe_fd[1]);  // Close write end
-                run_server(newsockfd);
-            }
-        }
-        else
-        {
-            printf("SERVIDOR PID: %d, New client connected\n", pid);
-            close(newsockfd);
-        }
+        printf("Mensaje recibido: %s\n", send_buffer.message);
     }
 }
-void run_server(int newsockfd)
-{   
+
+void run_server_ipv4(int type, int ipv)
+{
+    int clilen = 0, pid = 0;
+    struct sockaddr_in cli_addr;
+
+    if (connect_server_ipv4(&sockfd, type))
+    {
+        exit(EXIT_FAILURE);
+    }
+    switch (type)
+    {
+    case SOCK_STREAM:
+        while (TRUE)
+        {
+            newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, (socklen_t*)&clilen);
+            if (newsockfd == -1)
+            {
+                error_handler("Error accept", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            pid = fork();
+
+            if (pid == 0)
+            {
+                close(sockfd);
+
+                // Create pipe bethween parent and child
+                if (pipe(pipe_fd) == -1)
+                {
+                    perror("pipe");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Create child process
+                pid_t pid_ = fork();
+                if (pid_ == -1)
+                {
+                    perror("fork");
+                    exit(EXIT_FAILURE);
+                }
+                else if (pid_ == 0)
+                {
+                    // emergency process
+                    if (run_emergency_handler(pipe_fd))
+                    {
+                        error_handler("Error run_emergency_handler", __FILE__, __LINE__);
+                        exit(EXIT_FAILURE);
+                    }
+                    exit(EXIT_SUCCESS);
+                }
+                else
+                {
+                    // connection process
+                    close(pipe_fd[1]);
+                    run_admin_server(newsockfd);
+                }
+            }
+            else
+            {
+                printf("SERVIDOR PID: %d, New client connected\n", pid);
+                close(newsockfd);
+            }
+        }
+        break;
+    case SOCK_DGRAM:
+        run_normal_user_server(sockfd, ipv);
+        break;
+    default:
+        break;
+    }
+}
+
+void run_server_ipv6(int type, int ipv)
+{
+    int clilen = 0, pid = 0;
+    struct sockaddr_in6 cli_addr6;
+
+    if (connect_server_ipv6(&sockfd, type))
+    {
+        exit(EXIT_FAILURE);
+    }
+    switch (type)
+    {
+    case SOCK_STREAM:
+        while (TRUE)
+        {
+            newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr6, (socklen_t*)&clilen);
+            if (newsockfd == -1)
+            {
+                error_handler("Error accept", __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            pid = fork();
+
+            if (pid == 0)
+            {
+                close(sockfd);
+                // Create pipe bethween parent and child
+                if (pipe(pipe_fd) == -1)
+                {
+                    perror("pipe");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Create child process
+                pid_t pid_ = fork();
+                if (pid_ == -1)
+                {
+                    perror("fork");
+                    exit(EXIT_FAILURE);
+                }
+                else if (pid_ == 0)
+                {
+
+                    // emergency process
+                    if (run_emergency_handler(pipe_fd))
+                    {
+                        error_handler("Error run_emergency_handler", __FILE__, __LINE__);
+                        exit(EXIT_FAILURE);
+                    }
+                    exit(EXIT_SUCCESS);
+                }
+                else
+                {
+
+                    // connection process
+                    close(pipe_fd[1]);
+                    run_admin_server(newsockfd);
+                }
+            }
+            else
+            {
+                printf("SERVIDOR PID: %d, New client connected\n", pid);
+                close(newsockfd);
+            }
+        }
+        break;
+    case SOCK_DGRAM:
+        run_normal_user_server(sockfd, ipv);
+        break;
+    default:
+        break;
+    }
+}
+
+void run_admin_server(int newsockfd)
+{
     while (TRUE)
     {
         memset(recv_socket_buffer, 0, BUFFER_SIZE);
-        if (recv_message(newsockfd, recv_socket_buffer))
+        if (recv_tcp_message(newsockfd, recv_socket_buffer))
         {
-            error_handler("Error recv_message", __FILE__, __LINE__);
+            error_handler("Error recv_tcp_message", __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
         printf("PROCESO %d. ", getpid());
@@ -161,15 +353,91 @@ void run_server(int newsockfd)
     }
 }
 
+void run_normal_user_server(int newsockfd, int ipv)
+{
+    struct sockaddr_in cli_addr;
+
+    while (TRUE)
+    {
+        // wait a moment to start to get the messages
+        sleep(2);
+        memset(recv_socket_buffer, 0, BUFFER_SIZE);
+        if (recv_udp_message(newsockfd, recv_socket_buffer, &cli_addr))
+        {
+            error_handler("Error recv_udp_message", __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+        printf("PROCESO %d. ", getpid());
+        printf("Recibí: %s\n", recv_socket_buffer);
+
+        switch (get_command())
+        {
+        case CLOSE_CONNECTION:
+            end_conn(newsockfd);
+            break;
+        case OPTION1_:
+            send_supply_udp(newsockfd, cli_addr);
+            break;
+        case OPTION2_:
+            send_deneid_udp_message(newsockfd, cli_addr);
+            break;
+        default:
+            fprintf(stdout, "Command error\n");
+            break;
+        };
+    }
+}
+
+void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr)
+{   
+    if (get_supply_status(&send_socket_buffer))
+    {
+        error_handler("Error get_supply_status", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    
+    if (send_udp_message(newsockfd, send_socket_buffer, cli_addr))
+    {
+        error_handler("Error send_message", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    // Free memory
+    free_ptr(&send_socket_buffer);
+}
+
+void send_deneid_udp_message(int newsockfd, struct sockaddr_in cli_addr)
+{
+    send_socket_buffer = (char*)malloc(BUFFER_SIZE);
+    if (send_socket_buffer == NULL)
+    {
+        error_handler("Error allocating memory", __FILE__, __LINE__);
+    }
+    if (cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, M_ACC_DENEID, OVERRIDE))
+    {
+        free_ptr(&send_socket_buffer);
+        error_handler("Error json_add_key_value_to_json_string", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (send_udp_message(newsockfd, send_socket_buffer, cli_addr))
+    {
+        free_ptr(&send_socket_buffer);
+        error_handler("Error send_message", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    free_ptr(&send_socket_buffer);
+}
+
 void end_conn(int newsockfd)
 {
     // Configurar el extremo de lectura del pipe en modo no bloqueante
     int flags = fcntl(pipe_fd[0], F_GETFL);
-    if (flags == -1) {
+    if (flags == -1)
+    {
         perror("fcntl");
         exit(EXIT_FAILURE);
     }
-    if (fcntl(pipe_fd[0], F_SETFL, flags | O_NONBLOCK) == -1) {
+    if (fcntl(pipe_fd[0], F_SETFL, flags | O_NONBLOCK) == -1)
+    {
         perror("fcntl");
         exit(EXIT_FAILURE);
     }
@@ -177,18 +445,24 @@ void end_conn(int newsockfd)
     // Leer datos del pipe en el proceso padre
     ssize_t bytes_read;
     bytes_read = read(pipe_fd[0], buffer, sizeof(buffer));
-    if (bytes_read == -1) {
+    if (bytes_read == -1)
+    {
         perror("read");
         // Si no hay datos disponibles para leer, continuar sin bloquear
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
             printf("No hay datos disponibles para leer en este momento.\n");
-        } else {
-            close(pipe_fd[0]); 
+        }
+        else
+        {
+            close(pipe_fd[0]);
             close(newsockfd);
             send_end_conn_message(newsockfd);
             exit(EXIT_FAILURE);
         }
-    } else if (bytes_read > 0) {
+    }
+    else if (bytes_read > 0)
+    {
         printf("Mensaje recibido en el proceso padre: %s\n", buffer);
     }
 
@@ -198,8 +472,10 @@ void end_conn(int newsockfd)
     send_end_conn_message(newsockfd);
     sleep(5);
     close(newsockfd);
+    msgctl(msg_id, IPC_RMID, 0);
     // send end of connection to parent pid
     kill(getppid(), SIGTSTP);
+    
     exit(EXIT_SUCCESS);
 }
 
@@ -236,13 +512,13 @@ void send_supply_message(int newsockfd)
 }
 
 void send_deneid_message(int newsockfd)
-{   
+{
     send_socket_buffer = (char*)malloc(BUFFER_SIZE);
     if (send_socket_buffer == NULL)
     {
         error_handler("Error allocating memory", __FILE__, __LINE__);
     }
-    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_, OVERRIDE))
+    if (cjson_add_key_value_to_json_string(send_socket_buffer, K_ACC_DENEID, TRUE_, OVERRIDE))
     {
         free_ptr(&send_socket_buffer);
         error_handler("Error json_add_key_value_to_json_string", __FILE__, __LINE__);
@@ -258,13 +534,13 @@ void send_deneid_message(int newsockfd)
 }
 
 void send_end_conn_message(int newsockfd)
-{   
+{
     send_socket_buffer = (char*)malloc(BUFFER_SIZE);
     if (send_socket_buffer == NULL)
-    {   
+    {
         error_handler("Error allocating memory", __FILE__, __LINE__);
     }
-    if(cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_, OVERRIDE))
+    if (cjson_add_key_value_to_json_string(send_socket_buffer, K_END, TRUE_, OVERRIDE))
     {
         free_ptr(&send_socket_buffer);
         error_handler("Error json_add_key_value_to_json_string", __FILE__, __LINE__);
@@ -281,9 +557,9 @@ void send_end_conn_message(int newsockfd)
 
 int set_supply()
 {
-    char* category;
-    char* key;
-    char* value;
+    char* category = NULL;
+    char* key = NULL;
+    char* value = NULL;
 
     if (get_value_of_key_from_json_string(recv_socket_buffer, K_SUP_COMMAND_EQ, &category))
     {
@@ -355,7 +631,7 @@ int check_credentials()
 int get_command()
 {
     if (flag_handler)
-    {   
+    {
         return 0;
     }
     char* c_buffer;
@@ -370,104 +646,9 @@ int get_command()
     return r;
 }
 
-int connect_server_unix(int* sockfd, char* argv[])
-{
-    struct sockaddr_un serv_addr;
-    uint16_t puerto;
-
-    if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        error_handler("Error socket", __FILE__, __LINE__);
-        return 1;
-    }
-
-    unlink(argv[2]);
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sun_family = AF_UNIX;
-    strcpy(serv_addr.sun_path, argv[2]);
-
-    if (bind(*sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        error_handler("Error bind", __FILE__, __LINE__);
-        return 1;
-    }
-    printf("Proceso: %d - socket disponible: %s\n", getpid(), serv_addr.sun_path);
-
-    if ((listen(*sockfd, 100)) == -1)
-    {
-        error_handler("Error listen", __FILE__, __LINE__);
-        return 1;
-    }
-    return 0;
-}
-int connect_server_ipv4(int* sockfd, char* argv[])
-{
-    struct sockaddr_in serv_addr;
-    uint16_t puerto;
-
-    if ((*sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        error_handler("Error socket", __FILE__, __LINE__);
-        return 1;
-    }
-
-    memset((char*)&serv_addr, 0, sizeof(serv_addr));
-    puerto = (uint16_t)atoi(argv[1]);
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons((uint16_t)puerto);
-
-    if (bind(*sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        error_handler("Error bind", __FILE__, __LINE__);
-        return 1;
-    }
-
-    printf("Proceso: %d - socket disponible: %d\n", getpid(), ntohs(serv_addr.sin_port));
-
-    if ((listen(*sockfd, 100)) == -1)
-    {
-        error_handler("Error listen", __FILE__, __LINE__);
-        return 1;
-    }
-    return 0;
-}
-int connect_server_ipv6(int* sockfd, char* argv[])
-{
-    struct sockaddr_in6 serv_addr6;
-    uint16_t puerto;
-
-    if ((*sockfd = socket(AF_INET6, SOCK_STREAM, 0)) < 0)
-    {
-        error_handler("Error socket", __FILE__, __LINE__);
-        return 1;
-    }
-
-    memset((char*)&serv_addr6, 0, sizeof(serv_addr6));
-    puerto = (uint16_t)atoi(argv[1]);
-    serv_addr6.sin6_family = AF_INET6;
-    serv_addr6.sin6_addr = in6addr_any;
-    serv_addr6.sin6_port = htons((uint16_t)puerto);
-
-    if (bind(*sockfd, (struct sockaddr*)&serv_addr6, sizeof(serv_addr6)) < 0)
-    {
-        error_handler("Error bind", __FILE__, __LINE__);
-        return 1;
-    }
-
-    printf("Proceso: %d - socket disponible: %d\n", getpid(), ntohs(serv_addr6.sin6_port));
-
-    if (listen(*sockfd, 100) == -1)
-    {
-        error_handler("Error listen", __FILE__, __LINE__);
-        return 1;
-    }
-
-    return 0;
-}
-
 static void sign_handler(int signal)
-{
+{   
+    printf("Signal: %d\n", signal);
     switch (signal)
     {
     case SIGINT:
@@ -485,6 +666,7 @@ static void sign_handler(int signal)
         printf("\
             The server connection is close.\n");
         sleep(5);
+        end_conn(newsockfd);
         exit(EXIT_SUCCESS);
         break;
     default:

@@ -13,12 +13,12 @@ void print_cjson(char* cjson_buffer)
     string = cJSON_Print(cjson_object);
     if (string == NULL)
     {
-        cJSON_Delete(cjson_object);
+        free_cjson_ptr(&cjson_object);
         error_handler("Error printing json.", __FILE__, __LINE__);
     }
     printf("\n%s\n", string);
     free_ptr(&string);
-    cJSON_Delete(cjson_object);
+    free_cjson_ptr(&cjson_object);
 }
 
 int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char** ptr_buffer)
@@ -32,14 +32,14 @@ int get_value_of_key_from_json_string(char* cjson_buffer, char* key, char** ptr_
     if (cjson_object == NULL)
     {
         error_handler("Error null cjson*.", __FILE__, __LINE__);
-        return 1;
+        return -1;
     }
     if(get_value_of_key_from_json_object(cjson_object, key, ptr_buffer))
     {
-        cJSON_Delete(cjson_object);
+        free_cjson_ptr(&cjson_object);
         return 1;
     }
-    cJSON_Delete(cjson_object);
+    free_cjson_ptr(&cjson_object);
     return 0;
 }
 
@@ -65,6 +65,20 @@ int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char** ptr
         *ptr_buffer = buffer;
         return 0;
     }
+    // if the value is a number
+    if (cJSON_IsNumber(json_value))
+    {
+        buffer = (char*)malloc(20);
+        if (buffer == NULL)
+        {
+            error_handler("Error allocating memory.", __FILE__, __LINE__);
+            return 1;
+        }
+        // copy value to buffer
+        sprintf(buffer, "%f", json_value->valuedouble);
+        *ptr_buffer = buffer;
+        return 0;
+    }
     // if the value is an object
     if(cJSON_IsObject(json_value)){
     // create buffer
@@ -79,13 +93,13 @@ int get_value_of_key_from_json_object(cJSON* cjson_object, char* key, char** ptr
         *ptr_buffer = buffer;
         return 0;
     }
-    return 0;
+    return 1;
 }
 
 int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buffer, int flags)
 {
-    cJSON* cjson_object;
-    cJSON* value;
+    cJSON* cjson_object = NULL;
+    cJSON* value = NULL;
 
     if (buffer == NULL || key == NULL)
     {
@@ -111,7 +125,7 @@ int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buff
         value = cJSON_CreateNumber(atof(buffer));
         if (value == NULL)
         {
-            cJSON_Delete(cjson_object); 
+            free_cjson_ptr(&cjson_object); 
             error_handler("Error: Unable to create JSON number value.", __FILE__, __LINE__);
             return 1;
         }
@@ -122,7 +136,7 @@ int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buff
         value = cJSON_Parse(buffer);
         if (value == NULL)
         {
-            cJSON_Delete(cjson_object); 
+            free_cjson_ptr(&cjson_object); 
             error_handler("Error: Unable to create JSON object value.", __FILE__, __LINE__);
             return 1;
         }
@@ -132,7 +146,7 @@ int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buff
         value = cJSON_CreateString(buffer);
         if (value == NULL)
         {
-            cJSON_Delete(cjson_object); 
+            free_cjson_ptr(&cjson_object); 
             error_handler("Error: Unable to create JSON string value.", __FILE__, __LINE__);
             return 1;
         }
@@ -142,8 +156,8 @@ int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buff
         if (flags & OVERRIDE) {
             cJSON_DeleteItemFromObject(cjson_object, key);
         } else {
-            cJSON_Delete(cjson_object);
-            cJSON_Delete(value);
+            free_cjson_ptr(&cjson_object);
+            free_cjson_ptr(&value);
             error_handler("Error: The key already exists.", __FILE__, __LINE__);
             return 0;
         }
@@ -152,12 +166,12 @@ int cjson_add_key_value_to_json_string(char* cjson_buffer, char* key, char* buff
 
     if(json_object_to_json_string(cjson_object, cjson_buffer))
     {
-        cJSON_Delete(cjson_object);
+        free_cjson_ptr(&cjson_object);
         error_handler("Error: Unable to convert JSON object to string.", __FILE__, __LINE__);
         return 1;
     }
     // value is already in the object, the free is not necessary
-    cJSON_Delete(cjson_object);
+    free_cjson_ptr(&cjson_object);
     return 0;
 }
 
@@ -199,7 +213,6 @@ int is_key_in_json_buffer(char* cjson_buffer, char* key)
     }
 
     // parse json string or create a new object
-    printf("cjson_buffer: %s\n", cjson_buffer);
     cJSON* cjson_object = cJSON_Parse(cjson_buffer);
     if (cjson_object == NULL)
     {
@@ -209,11 +222,11 @@ int is_key_in_json_buffer(char* cjson_buffer, char* key)
     // check if the key is in the object
     if(is_key_in_json_object(cjson_object, key))
     {
-        cJSON_Delete(cjson_object);
+        free_cjson_ptr(&cjson_object);
         return 1;
     }else
     {
-        cJSON_Delete(cjson_object);
+        free_cjson_ptr(&cjson_object);
         return 0;
     }
 }
@@ -260,14 +273,23 @@ int merge_json_strings(char* json_string1, char* json_string2, char* merged_json
     if (merged_string == NULL)
     {
         error_handler("Error printing merged json.", __FILE__, __LINE__);
-        cJSON_Delete(merged_object);
+        free_cjson_ptr(&merged_object);
         return 1;
     }
     
     strcpy(merged_json, merged_string);
     
-    cJSON_Delete(merged_object);
+    free_cjson_ptr(&merged_object);
     free(merged_string);
     
     return 0;
+}
+
+void free_cjson_ptr(cJSON** json)
+{
+    if (*json != NULL)
+    {
+        cJSON_Delete(*json);
+        *json = NULL;
+    }
 }

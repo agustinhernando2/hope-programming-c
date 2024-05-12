@@ -15,9 +15,13 @@
 #include <cJSON.h>
 #include <lib_handler.h>
 
+
+
+
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
 volatile sig_atomic_t flag_get_supply = 0;
+volatile sig_atomic_t skip_option = 1;
 
 uint16_t puerto;
 char send_socket_buffer[BUFFER_SIZE];
@@ -37,7 +41,7 @@ char password[MAX_PASSWORD_LENGTH];
  *
  * @return 0 on success, 1 on error.
  */
-int try_connect_server();
+int try_connect_server(int type, const char* ip_address, int ipv);
 
 /**
  * @brief Sends a message to the server.
@@ -76,6 +80,11 @@ void get_credentials();
  * Adds the username and password to the message to be sent to the server.
  */
 void add_credentials();
+
+/**
+ * @brief Checks the user credentials.
+*/
+int check_credentials();
 
 /**
  * @brief Requests user information.

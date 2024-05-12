@@ -19,6 +19,18 @@ int read_file(char* filename, char** buffer)
     }
     // Get the size of the file
     long fsize = ftell(file);
+    if(fsize == -1)
+    {
+        fclose(file);
+        fprintf(stderr, "%s:%d: Error getting file size\n",__FILE__, __LINE__);
+        return 1;
+    }
+    if(fsize == 0)
+    {
+        fclose(file);
+        fprintf(stderr, "%s:%d: File is empty\n",__FILE__, __LINE__);
+        return 1;
+    }
     // Check if the file is empty
     if(fseek(file, 0, SEEK_SET))
     {
@@ -92,4 +104,28 @@ void error_handler(const char* error_message, char* file, int line) {
         fprintf(stderr, " Error number: %d", errno);
     }
     fprintf(stderr, "\n");
+}
+
+int generate_log(char* filename, char* timestamp, char* message)
+{
+
+    FILE* file;
+    file = fopen(filename, "a");
+    if (file == NULL)
+    {
+        error_handler("Error opening file", __FILE__, __LINE__);
+        return 1;
+    }
+    fprintf(file, "%s, %s\n", timestamp, message);
+    fclose(file);
+    return 0;
+}
+
+void set_timestamp(char* timestamp, int t_size)
+{
+    time_t current_time;
+    struct tm* time_info;
+    time(&current_time);
+    time_info = localtime(&current_time);
+    strftime(timestamp, t_size, "%a %b %d %H:%M:%S %Y", time_info);
 }

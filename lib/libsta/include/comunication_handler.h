@@ -5,10 +5,25 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <unistd.h>
+#include <sys/un.h>
 #include <sys/stat.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <lib_handler.h>
+
+#define PORT_IPV4_UDP 2222
+#define PORT_IPV4_TCP 3333
+#define PORT_IPV6_UDP 4444
+#define PORT_IPV6_TCP 5555
+#define FILE_UNIX_UDP "unix_udp"
+#define FILE_UNIX_TCP "unix_tcp"
+#define N_CONN 5
+#define IPV4 4
+#define IPV6 6
+#define IP_ADDR_V4 "127.0.0.1"
+#define IP_ADDR_V6 "::1"
 
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
@@ -40,6 +55,7 @@
 #define K_VALUE "value"
 #define K_KEY "key"
 
+#define M_ACC_DENEID "You should be connected to the server using TCP and be an admin to modify the supplies."
 #define C_SIZE 50
 #define BUFFER_SIZE 1024
 #define MESSAGE "message"
@@ -50,7 +66,42 @@
 #define FALSE_ "0"
 #define DELIMITER '\n'
 
+/**
+ * @brief Connects to the server using IPv4.
+ *
+ * @param[out] sockfd Pointer to the socket file descriptor.
+ * @param[in] type type udp/tcp.
+ * @return 0 on success, -1 on error.
+ */
+int connect_server_ipv4(int *sockfd, int type);
 
+/**
+ * @brief Connects to the server using IPv6.
+ *
+ * @param[out] sockfd Pointer to the socket file descriptor.
+ * @param[in] argv Command-line arguments.
+ * @param[in] type type udp/tcp.
+ * @return 0 on success, -1 on error.
+ */
+int connect_server_ipv6(int *sockfd, int type);
+
+/**
+ * @brief Connects to the server using IPv4.
+ *
+ * @param[out] sockfd Pointer to the socket file descriptor.
+ * @param[in] ip_address address.
+ * @param[in] type type udp/tcp.
+ * @return 0 on success, -1 on error.
+ */
+int connect_client_ipv4(int* sockfd, const char* ip_address, int type);
+
+/**
+ * @brief Connects to the server using IPv6.
+ * @param[out] sockfd Pointer to the socket file descriptor.
+ * @param[in] ip_address address.
+ * @param[in] type type udp/tcp.
+*/
+int connect_client_ipv6(int* sockfd, const char* ip_address, int type);
 /**
  * @brief - send a message
  * If the message is too long so It'll be sending by parts
@@ -76,4 +127,14 @@ int send_message_to_socket(char *json_buffer, int b_size, int sockfd);
  * @param sockfd: socket file descriptor.
  * @return 0 success, 1 if an error occurs.
  */
-int recv_message(int sockfd, char *json_buffer);
+int recv_tcp_message(int sockfd, char *json_buffer);
+
+/**
+ * @brief - send a message through sockets using UDP
+*/
+int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_in* cli_addr);
+
+/**
+ * @brief - send a message through sockets using UDP
+*/
+int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_in cli_addr);

@@ -7,26 +7,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-#include <unistd.h>
-#include <sys/un.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 
 /* Libraries */
 #include <emergency_handler.h>
-#include <critical_handler.h>
+#include <alert_module.h>
 #include <comunication_handler.h>
-#include <emergency_handler.h>
 #include <supplies_data_handler.h>
 #include <lib_handler.h>
 #include <cjson_handler.h>
-#include <cJSON.h>
-
-#define STYPE_IPV4 1
-#define STYPE_IPV6 2
-#define N_CONNECTIONS 5
-#define JSON_FILE "data.json"
-
 
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
@@ -35,51 +25,48 @@ volatile sig_atomic_t flag_handler = 0;
 int pipe_fd[2];
 char buffer[100];
 
-int sockfd;
-int newsockfd;
+int sockfd = 0;
+int msg_id = 0;
+int newsockfd = 0;
 char* send_socket_buffer = NULL;
 char recv_socket_buffer[BUFFER_SIZE];
+
+
+char recv_buffer_msgq[BUFFER_SIZE_QMS];
 
 /**
  * @brief Runs the server using IPv4.
  *
- * @param[in] argv Command-line arguments.
+ * @param[in] type type udp/tcp.
  */
-void run_server_ipv4(char* argv[]);
+void run_server_ipv4(int type, int ipv);
 
 /**
  * @brief Runs the server using IPv6.
  *
- * @param[in] argv Command-line arguments.
+ * @param[in] type type udp/tcp.
  */
-void run_server_ipv6(char* argv[]);
-
-/**
- * @brief Connects to the server using IPv4.
- *
- * @param[out] sockfd Pointer to the socket file descriptor.
- * @param[in] argv Command-line arguments.
- * @return 0 on success, -1 on error.
- */
-int connect_server_ipv4(int *sockfd, char* argv[]);
-
-/**
- * @brief Connects to the server using IPv6.
- *
- * @param[out] sockfd Pointer to the socket file descriptor.
- * @param[in] argv Command-line arguments.
- * @return 0 on success, -1 on error.
- */
-int connect_server_ipv6(int *sockfd, char* argv[]);
+void run_server_ipv6(int type, int ipv);
 
 /**
  * @brief Run the server.
  *
  * @param[in] newsockfd The socket file descriptor for the connection.
  */
-void run_server(int newsockfd);
+void run_admin_server(int newsockfd);
+
+/**
+ * @brief Run the server.
+ *
+ * @param[in] newsockfd The socket file descriptor for the connection.
+ */
+void run_normal_user_server(int newsockfd, int ipv);
 
 void end_conn(int newsockfd);
+
+void send_deneid_udp_message(int newsockfd, struct sockaddr_in cli_addr);
+
+void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr);
 
 /**
  * @brief Modify and send the supply status to the client.
@@ -123,7 +110,6 @@ int get_command();
  */
 int check_credentials();
 
-
 /**
  * @brief Signal handler function.
  *
@@ -143,3 +129,11 @@ void set_signal_handlers();
  * @return 0 on success, -1 on error.
  */
 int set_supply();
+
+void alert_and_emergency_listener(int msgid);
+
+/**
+ * @brief Create the message queue.
+ * @return msgid.
+*/
+int create_message_queue();
