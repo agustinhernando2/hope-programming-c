@@ -17,8 +17,8 @@
 #define SOUTH_ENTRY "SOUTH"
 
 // temperature range
-#define MIN_TEMPERATURE 36
-#define MAX_TEMPERATURE 40
+#define MIN_TEMPERATURE 16
+#define MAX_TEMPERATURE 38
 #define HIGH_TEMPERATURE 38
 #define BUFFER_SIZE_QMS 512
 #define BUFFER_SIZE_M 100

@@ -14,6 +14,10 @@ set(CMAKE_C_STANDARD 17)
 
 # Include the include directory, where the header files are located
 include_directories(include)
+include_directories(../libsta/include)
+
+# Include the cJSON library
+include_directories(../../external/cJSON)
 
 # Add the src directory, where the source files are located
 file(GLOB_RECURSE SOURCES "src/*.c")

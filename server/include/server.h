@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <semaphore.h>
 
 /* Libraries */
 #include <emergency_handler.h>
@@ -31,8 +32,7 @@ int newsockfd = 0;
 char* send_socket_buffer = NULL;
 char recv_socket_buffer[BUFFER_SIZE];
 
-
-char recv_buffer_msgq[BUFFER_SIZE_QMS];
+sem_t mutex_state; 
 
 /**
  * @brief Runs the server using IPv4.

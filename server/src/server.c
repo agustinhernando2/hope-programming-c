@@ -4,11 +4,14 @@ int main(int argc, char* argv[])
 {
     set_signal_handlers();
     create_message_queue();
+    // init semaphores
+    sem_init(&mutex_state, 0, 1);
+
     int status;
     pid_t pid, pid_c;
     int child_process = 0;
 
-    // Fork Modulo de alerta
+    Fork Modulo de alerta
     pid = fork();
     if (pid == 0)
     {
@@ -41,7 +44,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    
+
     // Fork server connection ipv4 TCP
     pid = fork();
     if (pid == 0)
@@ -110,8 +113,6 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    
-
     while (pid && child_process)
     {
         pid_c = wait(&status);
@@ -137,7 +138,8 @@ int create_message_queue()
 {
     // Create a unique key
     key_t key = ftok(K_MSG, 'm');
-    if (key == -1) {
+    if (key == -1)
+    {
         error_handler("Error ftok", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
@@ -389,13 +391,13 @@ void run_normal_user_server(int newsockfd, int ipv)
 }
 
 void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr)
-{   
+{
     if (get_supply_status(&send_socket_buffer))
     {
         error_handler("Error get_supply_status", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
-    
+
     if (send_udp_message(newsockfd, send_socket_buffer, cli_addr))
     {
         error_handler("Error send_message", __FILE__, __LINE__);
@@ -443,8 +445,7 @@ void end_conn(int newsockfd)
     }
 
     // Leer datos del pipe en el proceso padre
-    ssize_t bytes_read;
-    bytes_read = read(pipe_fd[0], buffer, sizeof(buffer));
+    ssize_t bytes_read = read(pipe_fd[0], buffer, sizeof(buffer));
     if (bytes_read == -1)
     {
         perror("read");
@@ -471,28 +472,40 @@ void end_conn(int newsockfd)
     fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
     send_end_conn_message(newsockfd);
     sleep(5);
+    // close socket
     close(newsockfd);
+
+    // close message queue
+    sem_destroy(&mutex_state);
+
+    // close message queue
     msgctl(msg_id, IPC_RMID, 0);
     // send end of connection to parent pid
     kill(getppid(), SIGTSTP);
-    
+
     exit(EXIT_SUCCESS);
 }
 
 void set_and_send_suply_status(int newsockfd)
 {
+    sem_wait(&mutex_state);
+
     if (set_supply())
     {
         error_handler("Error set_supply", __FILE__, __LINE__);
+        sem_post(&mutex_state);
         exit(EXIT_FAILURE);
     }
     if (send_message(send_socket_buffer, strlen(send_socket_buffer), newsockfd))
     {
         error_handler("Error send_message", __FILE__, __LINE__);
+        sem_post(&mutex_state);
         exit(EXIT_FAILURE);
     }
     // Free memory
     free_ptr(&send_socket_buffer);
+
+    sem_post(&mutex_state);
 }
 
 void send_supply_message(int newsockfd)
@@ -647,7 +660,7 @@ int get_command()
 }
 
 static void sign_handler(int signal)
-{   
+{
     printf("Signal: %d\n", signal);
     switch (signal)
     {

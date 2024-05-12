@@ -3,12 +3,13 @@
 		"last_keepalived":	"Wed Mar 07 12:27:29 2012",
 		"last_event":	"Server failure/Server shutdown"
 	},
+	"alerts":	{
+		"NORTH":	74,
+		"EAST":	70,
+		"WEST":	70,
+		"SOUTH":	65
+	},
 	"supplies":	{
-		"medicine":	{
-			"antibiotics":	1,
-			"analgesics":	100,
-			"bandages":	100
-		},
 		"food":	{
 			"vegetables":	200,
 			"fruits":	150,
@@ -16,13 +17,15 @@
 			"comida":	123,
 			"AAA":	123,
 			"agua2":	123,
-			"agua":	22
+			"agua":	22,
+			"manzana":	123
+		},
+		"medicine":	{
+			"antibiotics":	1,
+			"analgesics":	100,
+			"bandages":	100,
+			"cinta":	10,
+			"papel":	12
 		}
-	},
-	"alerts":	{
-		"NORTH":	46,
-		"EAST":	42,
-		"WEST":	42,
-		"SOUTH":	37
 	}
 }
