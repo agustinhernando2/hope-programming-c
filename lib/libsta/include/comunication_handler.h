@@ -1,17 +1,16 @@
 #pragma once
 
+#include <arpa/inet.h>
+#include <lib_handler.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <unistd.h>
-#include <sys/un.h>
 #include <sys/stat.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <lib_handler.h>
+#include <sys/types.h>
+#include <sys/un.h>
+#include <unistd.h>
 
 #define PORT_IPV4_UDP 2222
 #define PORT_IPV4_TCP 3333
@@ -93,15 +92,15 @@ int connect_server_ipv6(int *sockfd, int type);
  * @param[in] type type udp/tcp.
  * @return 0 on success, -1 on error.
  */
-int connect_client_ipv4(int* sockfd, const char* ip_address, int type);
+int connect_client_ipv4(int *sockfd, const char *ip_address, int type);
 
 /**
  * @brief Connects to the server using IPv6.
  * @param[out] sockfd Pointer to the socket file descriptor.
  * @param[in] ip_address address.
  * @param[in] type type udp/tcp.
-*/
-int connect_client_ipv6(int* sockfd, const char* ip_address, int type);
+ */
+int connect_client_ipv6(int *sockfd, const char *ip_address, int type);
 /**
  * @brief - send a message
  * If the message is too long so It'll be sending by parts
@@ -109,7 +108,7 @@ int connect_client_ipv6(int* sockfd, const char* ip_address, int type);
  * @param sockfd: socket file descriptor.
  * @return 0 success, 1 if an error occurs.
  */
-int send_message(char *json_buffer, size_t b_size,int sockfd);
+int send_message(char *json_buffer, size_t b_size, int sockfd);
 
 /**
  * @brief - send a message through sockets
@@ -131,10 +130,10 @@ int recv_tcp_message(int sockfd, char *json_buffer);
 
 /**
  * @brief - send a message through sockets using UDP
-*/
-int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_storage* cli_addr);
+ */
+int recv_udp_message(int sockfd, char *socket_buffer, struct sockaddr_storage *cli_addr);
 
 /**
  * @brief - send a message through sockets using UDP
-*/
-int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_storage* cli_addr);
+ */
+int send_udp_message(int newsockfd, char *send_socket_buffer, struct sockaddr_storage *cli_addr);

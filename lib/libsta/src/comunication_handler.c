@@ -1,7 +1,6 @@
 #include <comunication_handler.h>
 
-
-int connect_server_ipv4(int* sockfd, int type)
+int connect_server_ipv4(int *sockfd, int type)
 {
     struct sockaddr_in serv_addr;
     uint16_t port = 0;
@@ -12,19 +11,20 @@ int connect_server_ipv4(int* sockfd, int type)
         return 1;
     }
 
-    memset((char*)&serv_addr, 0, sizeof(serv_addr));
+    memset((char *)&serv_addr, 0, sizeof(serv_addr));
     if (type == 1)
     {
         port = PORT_IPV4_TCP;
     }
-    else{
+    else
+    {
         port = PORT_IPV4_UDP;
     }
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons((uint16_t)port);
 
-    if (bind(*sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
+    if (bind(*sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         error_handler("Error bind", __FILE__, __LINE__);
         return 1;
@@ -40,14 +40,15 @@ int connect_server_ipv4(int* sockfd, int type)
             return 1;
         }
     }
-    else{
+    else
+    {
         printf("** SERVIDOR IPv4 UDP - Proceso: %d - socket disponible: %d **\n", getpid(), ntohs(serv_addr.sin_port));
     }
 
     return 0;
 }
 
-int connect_server_ipv6(int* sockfd, int type)
+int connect_server_ipv6(int *sockfd, int type)
 {
     struct sockaddr_in6 serv_addr6;
     uint16_t port = 0;
@@ -58,43 +59,46 @@ int connect_server_ipv6(int* sockfd, int type)
         return 1;
     }
 
-    memset((char*)&serv_addr6, 0, sizeof(serv_addr6));
+    memset((char *)&serv_addr6, 0, sizeof(serv_addr6));
     if (type == 1)
     {
         port = PORT_IPV6_TCP;
     }
-    else{
+    else
+    {
         port = PORT_IPV6_UDP;
     }
     serv_addr6.sin6_family = AF_INET6;
     serv_addr6.sin6_addr = in6addr_any;
     serv_addr6.sin6_port = htons((uint16_t)port);
 
-    if (bind(*sockfd, (struct sockaddr*)&serv_addr6, sizeof(serv_addr6)) < 0)
+    if (bind(*sockfd, (struct sockaddr *)&serv_addr6, sizeof(serv_addr6)) < 0)
     {
         error_handler("Error bind", __FILE__, __LINE__);
         return 1;
     }
-    
+
     // Print the protocol type used
     if (type == 1)
     {
-        printf("** SERVIDOR IPv6 TCP - Proceso: %d - socket disponible: %d **\n", getpid(), ntohs(serv_addr6.sin6_port));
+        printf("** SERVIDOR IPv6 TCP - Proceso: %d - socket disponible: %d **\n", getpid(),
+               ntohs(serv_addr6.sin6_port));
         if (listen(*sockfd, N_CONN) == -1)
         {
             error_handler("Error listen", __FILE__, __LINE__);
             return 1;
         }
     }
-    else{
-        printf("** SERVIDOR IPv6 UDP - Proceso: %d - socket disponible: %d **\n", getpid(), ntohs(serv_addr6.sin6_port));
+    else
+    {
+        printf("** SERVIDOR IPv6 UDP - Proceso: %d - socket disponible: %d **\n", getpid(),
+               ntohs(serv_addr6.sin6_port));
     }
-
 
     return 0;
 }
 
-int connect_client_ipv4(int* sockfd, const char* ip_address, int type)
+int connect_client_ipv4(int *sockfd, const char *ip_address, int type)
 {
     struct sockaddr_storage serv_addr;
     socklen_t addr_size = 0;
@@ -106,37 +110,38 @@ int connect_client_ipv4(int* sockfd, const char* ip_address, int type)
         perror("Fallo al crear el socket");
         return -1;
     }
-    
+
     if (type == 1)
     {
         port = PORT_IPV4_TCP;
     }
-    else{
+    else
+    {
         port = PORT_IPV4_UDP;
     }
-    struct sockaddr_in* ipv4_addr = (struct sockaddr_in*)&serv_addr;
+    struct sockaddr_in *ipv4_addr = (struct sockaddr_in *)&serv_addr;
     ipv4_addr->sin_family = AF_INET;
     ipv4_addr->sin_port = htons(port);
-    
+
     // Convertir la dirección IPv4
     if (inet_pton(AF_INET, ip_address, &(ipv4_addr->sin_addr)) <= 0)
     {
-        fprintf(stderr,"Dirección IP inválida: %s\n",ip_address);
+        fprintf(stderr, "Dirección IP inválida: %s\n", ip_address);
         exit(EXIT_FAILURE);
     }
 
     addr_size = sizeof(struct sockaddr_in);
 
-    if (connect(*sockfd, (struct sockaddr*)&serv_addr, addr_size) < 0)
+    if (connect(*sockfd, (struct sockaddr *)&serv_addr, addr_size) < 0)
     {
         perror("Fallo al conectar");
         exit(EXIT_FAILURE);
     }
-    
+
     return 0;
 }
 
-int connect_client_ipv6(int* sockfd, const char* ip_address, int type)
+int connect_client_ipv6(int *sockfd, const char *ip_address, int type)
 {
     struct sockaddr_storage serv_addr;
     socklen_t addr_size = 0;
@@ -153,15 +158,16 @@ int connect_client_ipv6(int* sockfd, const char* ip_address, int type)
     {
         port = PORT_IPV6_TCP;
     }
-    else{
+    else
+    {
         port = PORT_IPV6_UDP;
     }
-    
+
     memset(&serv_addr, 0, sizeof(serv_addr));
-    struct sockaddr_in6* ipv6_addr = (struct sockaddr_in6*)&serv_addr;
+    struct sockaddr_in6 *ipv6_addr = (struct sockaddr_in6 *)&serv_addr;
     ipv6_addr->sin6_family = AF_INET6;
     ipv6_addr->sin6_port = htons(port);
-    
+
     // Convertir la dirección IPv6
     if (inet_pton(AF_INET6, ip_address, &(ipv6_addr->sin6_addr)) <= 0)
     {
@@ -170,16 +176,16 @@ int connect_client_ipv6(int* sockfd, const char* ip_address, int type)
     }
     addr_size = sizeof(struct sockaddr_in6);
 
-    if (connect(*sockfd, (struct sockaddr*)&serv_addr, addr_size) < 0)
+    if (connect(*sockfd, (struct sockaddr *)&serv_addr, addr_size) < 0)
     {
         perror("Fallo al conectar");
         exit(EXIT_FAILURE);
     }
-    
+
     return 0;
 }
 
-int send_message(char* json_buffer, size_t b_size, int sockfd)
+int send_message(char *json_buffer, size_t b_size, int sockfd)
 {
     size_t slice = 0;
     char socket_buffer[BUFFER_SIZE];
@@ -188,7 +194,7 @@ int send_message(char* json_buffer, size_t b_size, int sockfd)
     if (b_size <= BUFFER_SIZE)
     {
         strncpy(socket_buffer, json_buffer, b_size);
-        return (send_message_to_socket(socket_buffer,b_size, sockfd));
+        return (send_message_to_socket(socket_buffer, b_size, sockfd));
     }
     while (TRUE)
     {
@@ -205,13 +211,12 @@ int send_message(char* json_buffer, size_t b_size, int sockfd)
         slice += BUFFER_SIZE;
     }
     strncpy(socket_buffer, json_buffer + slice, BUFFER_SIZE);
-    return send_message_to_socket(socket_buffer,strlen(json_buffer), sockfd);
+    return send_message_to_socket(socket_buffer, strlen(json_buffer), sockfd);
 }
 
-
-int send_message_to_socket(char* json_buffer, size_t b_size, int sockfd)
+int send_message_to_socket(char *json_buffer, size_t b_size, int sockfd)
 {
-    if((b_size == 0)||(strlen(json_buffer) == 0))
+    if ((b_size == 0) || (strlen(json_buffer) == 0))
     {
         return 0;
     }
@@ -223,7 +228,7 @@ int send_message_to_socket(char* json_buffer, size_t b_size, int sockfd)
     return 0;
 }
 
-int recv_tcp_message(int sockfd, char* socket_buffer)
+int recv_tcp_message(int sockfd, char *socket_buffer)
 {
     memset(socket_buffer, 0, BUFFER_SIZE);
     ssize_t n;
@@ -236,12 +241,12 @@ int recv_tcp_message(int sockfd, char* socket_buffer)
     return 0;
 }
 
-int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_storage* cli_addr)
+int recv_udp_message(int sockfd, char *socket_buffer, struct sockaddr_storage *cli_addr)
 {
     memset(socket_buffer, 0, BUFFER_SIZE);
     socklen_t clilen = sizeof(*cli_addr);
     ssize_t n;
-    n = recvfrom(sockfd, socket_buffer, BUFFER_SIZE, 0, (struct sockaddr*)cli_addr, &clilen);
+    n = recvfrom(sockfd, socket_buffer, BUFFER_SIZE, 0, (struct sockaddr *)cli_addr, &clilen);
     if ((n == -1) || (strlen(socket_buffer) == 0))
     {
         fprintf(stderr, "%s:%d: Error reciving the data.\n", __FILE__, __LINE__);
@@ -250,9 +255,10 @@ int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_storage* c
     return 0;
 }
 
-int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_storage* cli_addr)
+int send_udp_message(int newsockfd, char *send_socket_buffer, struct sockaddr_storage *cli_addr)
 {
-    if (sendto(newsockfd, send_socket_buffer, strlen(send_socket_buffer), 0, (struct sockaddr*)cli_addr, sizeof(*cli_addr)) == -1)
+    if (sendto(newsockfd, send_socket_buffer, strlen(send_socket_buffer), 0, (struct sockaddr *)cli_addr,
+               sizeof(*cli_addr)) == -1)
     {
         fprintf(stderr, "%s:%d: Error sending the json_buffer content.\n", __FILE__, __LINE__);
         return 1;

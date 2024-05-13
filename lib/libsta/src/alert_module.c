@@ -4,16 +4,15 @@
 double get_temperature()
 {
     // Simulate temperature
-    srand( (unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));
     // return a number between MIN_TEMPERATURE and MAX_TEMPERATURE
-    return ((rand()/10) % (MAX_TEMPERATURE - MIN_TEMPERATURE )) + MIN_TEMPERATURE;
+    return ((rand() / 10) % (MAX_TEMPERATURE - MIN_TEMPERATURE)) + MIN_TEMPERATURE;
 }
 
-
-void simulate_temperature_sensor(char* entry)
+void simulate_temperature_sensor(char *entry)
 {
     str_temp str_temp;
-    memset(&str_temp, 0, sizeof(str_temp)); 
+    memset(&str_temp, 0, sizeof(str_temp));
 
     str_temp.temperature = get_temperature();
     strcpy(str_temp.location, entry);
@@ -22,9 +21,9 @@ void simulate_temperature_sensor(char* entry)
     char message[BUFFER_SIZE_M];
     char send_buffer[BUFFER_SIZE_QMS];
 
-    memset(message, 0, BUFFER_SIZE_M); 
-    memset(send_buffer, 0, BUFFER_SIZE_QMS); 
-    
+    memset(message, 0, BUFFER_SIZE_M);
+    memset(send_buffer, 0, BUFFER_SIZE_QMS);
+
     sprintf(message, "%s ENTRY, %.1f °C\n", str_temp.location, str_temp.temperature);
     generate_log(LOG_FILE_PATH, str_temp.timestamp, message);
 
@@ -52,11 +51,11 @@ void run_alert_module()
 }
 
 void send_alert_msqueue(char *message)
-{   
+{
     mess_t send_buffer;
     send_buffer.mtype = 1;
     strcpy(send_buffer.message, message);
-    
+
     if (msg_id == -1 || msg_id == 0)
     {
         perror("msgget error");
@@ -70,39 +69,40 @@ void send_alert_msqueue(char *message)
     }
 }
 
-int add_entry_to_json(char* entry)
+int add_entry_to_json(char *entry)
 {
-    char* obj_of_json_buffer = NULL;
-    char* value_char = NULL;
-    char* json_buffer = NULL;
+    char *obj_of_json_buffer = NULL;
+    char *value_char = NULL;
+    char *json_buffer = NULL;
 
-    if (read_file(JSON_FILE_PATH, &json_buffer)){
+    if (read_file(JSON_FILE_PATH, &json_buffer))
+    {
         error_handler("Error ", __FILE__, __LINE__);
         return 1;
     }
     // get the value of the key alerts, ex {"alerts":{...}}
-    if(get_value_of_key_from_json_string(json_buffer, K_ALERTS, &obj_of_json_buffer))
+    if (get_value_of_key_from_json_string(json_buffer, K_ALERTS, &obj_of_json_buffer))
     {
         error_handler("Error ", __FILE__, __LINE__);
         return 1;
     }
     // get the value of the key category, ex {"north_entry":{...}}
-    if(get_value_of_key_from_json_string(obj_of_json_buffer, entry, &value_char))
+    if (get_value_of_key_from_json_string(obj_of_json_buffer, entry, &value_char))
     {
         error_handler("Error ", __FILE__, __LINE__);
         return 1;
     }
     int value = atoi(value_char);
-    value ++;
+    value++;
     sprintf(value_char, "%d", value);
     // update the value of the key
-    if(cjson_add_key_value_to_json_string(obj_of_json_buffer, entry, value_char, OVERRIDE|INTPARSE))
+    if (cjson_add_key_value_to_json_string(obj_of_json_buffer, entry, value_char, OVERRIDE | INTPARSE))
     {
         error_handler("Error ", __FILE__, __LINE__);
         return 1;
     }
     // update the object
-    if(cjson_add_key_value_to_json_string(json_buffer, K_ALERTS, obj_of_json_buffer, OVERRIDE|OBJPARSE))
+    if (cjson_add_key_value_to_json_string(json_buffer, K_ALERTS, obj_of_json_buffer, OVERRIDE | OBJPARSE))
     {
         error_handler("Error ", __FILE__, __LINE__);
         return 1;

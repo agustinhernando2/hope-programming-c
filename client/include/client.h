@@ -3,20 +3,17 @@
 
 /* Unix libraries */
 #include <errno.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 /* Libraries */
-#include <comunication_handler.h>
-#include <cjson_handler.h>
 #include <cJSON.h>
+#include <cjson_handler.h>
+#include <comunication_handler.h>
 #include <lib_handler.h>
-
-
-
 
 /* An integral type that can be modified atomically, without the
    possibility of a signal arriving in the middle of the operation.  */
@@ -66,7 +63,6 @@ int recv_and_check_message();
  */
 void end_client_conn();
 
-
 /**
  * @brief Requests user credentials.
  *
@@ -83,7 +79,7 @@ void add_credentials();
 
 /**
  * @brief Checks the user credentials.
-*/
+ */
 int check_credentials();
 
 /**

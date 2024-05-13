@@ -37,10 +37,10 @@
 #define K_MSG "/bin/ls"
 extern int msg_id;
 
-typedef struct 
+typedef struct
 {
-  long mtype;
-  char message[BUFFER_SIZE_M];
+    long mtype;
+    char message[BUFFER_SIZE_M];
 } mess_t;
 
 typedef struct
@@ -52,10 +52,10 @@ typedef struct
 
 double get_temperature();
 
-void simulate_temperature_sensor(char* entry);
+void simulate_temperature_sensor(char *entry);
 
 void run_alert_module();
 
 void send_alert_msqueue(char *send_buffer);
 
-int add_entry_to_json(char* entry);
+int add_entry_to_json(char *entry);

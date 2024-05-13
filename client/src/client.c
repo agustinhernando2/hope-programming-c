@@ -1,6 +1,6 @@
 #include <client.h>
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     set_signal_handlers();
 
@@ -15,7 +15,8 @@ int main(int argc, char* argv[])
 
     get_credentials();
 
-    if(check_credentials()){
+    if (check_credentials())
+    {
         // if the user is admin, the connection will be TCP
         connection_type = SOCK_STREAM;
     }
@@ -31,10 +32,10 @@ int main(int argc, char* argv[])
     ip_version = atoi(argv[2]);
 
     try_connect_server(connection_type, ip_version);
-    
+
     while (TRUE)
     {
-        if(skip_option == 1)
+        if (skip_option == 1)
         {
             memset(send_socket_buffer, 0, BUFFER_SIZE);
             get_options();
@@ -58,7 +59,7 @@ void send_message_to_server()
 {
     if (send_message(send_socket_buffer, BUFFER_SIZE, sockfd))
     {
-        error_handler("Error send_message",__FILE__, __LINE__);
+        error_handler("Error send_message", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
 }
@@ -81,14 +82,14 @@ void try_connect_server(int type, int ipv)
     case IPV4:
         if (connect_client_ipv4(&sockfd, IP_ADDR_V4, type))
         {
-            error_handler("Error to connect to the server",__FILE__, __LINE__);
+            error_handler("Error to connect to the server", __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
         break;
     case IPV6:
         if (connect_client_ipv6(&sockfd, IP_ADDR_V6, type))
         {
-            error_handler("Error to connect to the server",__FILE__, __LINE__);
+            error_handler("Error to connect to the server", __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
         break;
@@ -100,8 +101,6 @@ void try_connect_server(int type, int ipv)
         break;
     }
 }
-
-
 
 int recv_and_check_message()
 {
@@ -123,14 +122,14 @@ int recv_and_check_message()
     clear_screen();
     print_cjson(recv_socket_buffer);
 
-    while(flag_get_supply == 1)
+    while (flag_get_supply == 1)
     {
         // in loop to get supply until SIGINT is ejecuted
         fprintf(stdout, "\n\tCTRL + C to back\n");
         send_message_to_server();
         recv_and_check_message();
     }
-    
+
     return 0;
 }
 
@@ -193,11 +192,11 @@ void get_options()
             break;
         default:
             printf("Invalid option. Please enter a valid number.\n");
-            flag=1;
-            option=0;
+            flag = 1;
+            option = 0;
             break;
         }
-    }while (flag);
+    } while (flag);
 }
 
 void get_supplies_options()
@@ -227,12 +226,12 @@ void get_supplies_options()
             break;
         default:
             printf("Invalid option. Please enter a valid number.\n");
-            flag=1;
+            flag = 1;
             option = 0;
             break;
         }
     } while (flag);
-    
+
     printf("Write the suply:\n");
     scanf("%s", key);
     cjson_add_key_value_to_json_string(send_socket_buffer, K_KEY, key, OVERRIDE);
@@ -244,7 +243,8 @@ void get_supplies_options()
     cjson_add_key_value_to_json_string(send_socket_buffer, K_VALUE, value_str, OVERRIDE);
 }
 
-void clear_screen() {
+void clear_screen()
+{
     fprintf(stdout, "...\n");
     sleep(1);
     // ANSI secuence to clean the screen
@@ -254,20 +254,21 @@ void clear_screen() {
 
 static void sign_handler(int signal)
 {
-    switch (signal) {
-        case SIGINT:
-            /* out of the loop*/
-            printf("SIGINT called\n");
-            flag_get_supply = 0;
-            skip_option = 1;
-            break;
-        case SIGTSTP:
-            printf("SIGTSTP called\n");
-            // end connection
-            end_client_conn();
-            break;
-        default: 
-            break;
+    switch (signal)
+    {
+    case SIGINT:
+        /* out of the loop*/
+        printf("SIGINT called\n");
+        flag_get_supply = 0;
+        skip_option = 1;
+        break;
+    case SIGTSTP:
+        printf("SIGTSTP called\n");
+        // end connection
+        end_client_conn();
+        break;
+    default:
+        break;
     }
     return;
 }

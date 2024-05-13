@@ -1,5 +1,25 @@
 #!/bin/bash
 
+
+# We only make check, not changes
+# Use the find command with the variable
+PROJECT_PATH=$(pwd)
+
+echo $PROJECT_PATH
+
+# ToDo: Add documentation about 'tr' command and describe better this command
+SOURCE_FILES=$(find $PROJECT_PATH/server/src -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES+=$(find $PROJECT_PATH/server/include -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES=$(find $PROJECT_PATH/client/src -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES+=$(find $PROJECT_PATH/client/include -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES+=$(find $PROJECT_PATH/lib/libdyn/src -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES+=$(find $PROJECT_PATH/lib/libdyn/include -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES+=$(find $PROJECT_PATH/lib/libsta/src -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+SOURCE_FILES+=$(find $PROJECT_PATH/lib/libsta/include -type f \( -name "*.cpp" -or -name "*.hpp" -or -name "*.h" -or -name "*.c" \) | tr "\n" " ")
+
+clang-format --style=Microsoft -i $SOURCE_FILES
+
+sleep 1
 # Elimina el directorio build si existe
 rm -rf build
 
