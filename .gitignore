@@ -13,8 +13,8 @@
 /build/
 
 # External directoy
-#/external/cJSON
-#/external/unity
+/external/cJSON
+/external/unity
 
 # Dependency files
 *.d

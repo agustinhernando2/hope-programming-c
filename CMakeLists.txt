@@ -40,8 +40,8 @@ FetchContent_Declare(
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/cJSON
   UPDATE_COMMAND ""
 )
-# FetchContent_MakeAvailable(cJSON)
-# FetchContent_MakeAvailable(Unity)
+FetchContent_MakeAvailable(cJSON)
+FetchContent_MakeAvailable(Unity)
 
 # Compile the libraries
 add_subdirectory(lib/libdyn)
