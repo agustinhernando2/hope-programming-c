@@ -49,7 +49,7 @@ if(RUN_COVERAGE)
 add_executable(test_${PROJECT_NAME} ${TESTS_FILES} ${SRC_FILES})
 
 # Link with Unity
-target_link_libraries(test_${PROJECT_NAME} Unity cJSON)
+target_link_libraries(test_${PROJECT_NAME} Unity_test cJSON)
 
 # Add test
 add_test(NAME test_${PROJECT_NAME} COMMAND test_${PROJECT_NAME})

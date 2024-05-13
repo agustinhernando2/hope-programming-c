@@ -21,19 +21,16 @@ include(FetchContent)
 # We are going to use cJSON to send messages between server and client
 set(CJSON_GIT_URL "https://github.com/DaveGamble/cJSON.git")
 
-# In this example we are going to use Unity to download and to test our project
-set(UNITY_GIT_URL "https://github.com/ThrowTheSwitch/Unity.git")
-
 # Enable debug
 set(FETCHCONTENT_QUIET OFF)
 
-FetchContent_Declare(
-  Unity
-  GIT_REPOSITORY ${UNITY_GIT_URL}
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/unity
-  UPDATE_COMMAND ""
-)
-
+# FetchContent_Declare(
+#   Unity_test
+#   GIT_REPOSITORY ${UNITY_GIT_URL}
+#   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/unity
+#   UPDATE_COMMAND ""
+# )
+# UNITY in cJSON library
 FetchContent_Declare(
   cJSON
   GIT_REPOSITORY ${CJSON_GIT_URL}
@@ -41,7 +38,6 @@ FetchContent_Declare(
   UPDATE_COMMAND ""
 )
 FetchContent_MakeAvailable(cJSON)
-FetchContent_MakeAvailable(Unity)
 
 # Compile the libraries
 add_subdirectory(lib/libdyn)
