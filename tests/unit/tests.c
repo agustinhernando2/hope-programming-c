@@ -2,6 +2,44 @@
 #include <cjson_handler.h>
 #include <lib_handler.h>
 #include <supplies_data_handler.h>
+#include <alert_module.h>
+#include <comunication_handler.h>
+
+int msg_id = 0;
+
+void test_connect_server_ipv6_udp()
+{
+    int sockfd = 0;
+    TEST_ASSERT_EQUAL(0, connect_server_ipv6(&sockfd, SOCK_DGRAM));
+    close(sockfd);
+}
+
+void test_connect_server_ipv6_tcp()
+{
+    int sockfd = 0;
+    TEST_ASSERT_EQUAL(0, connect_server_ipv6(&sockfd, SOCK_STREAM));
+    close(sockfd);
+}
+
+void test_connect_server_ipv4_udp()
+{
+    int sockfd = 0;
+    TEST_ASSERT_EQUAL(0, connect_server_ipv4(&sockfd, SOCK_DGRAM));
+    close(sockfd);
+}
+
+void test_connect_server_ipv4_tcp()
+{
+    int sockfd = 0;
+    TEST_ASSERT_EQUAL(0, connect_server_ipv4(&sockfd, SOCK_STREAM));
+    close(sockfd);
+}
+
+void test_get_temperature()
+{
+    double temperature = get_temperature();
+    TEST_ASSERT_TRUE(temperature >= MIN_TEMPERATURE && temperature <= MAX_TEMPERATURE);
+}
 
 void test_cjson_add_key_value_to_json_string(){
     char cjson_buffer[50];
@@ -128,6 +166,12 @@ int main()
     RUN_TEST(test_cjson_add_key_object_to_json_string_2);
     RUN_TEST(test_is_key_in_json_object);
     RUN_TEST(test_get_value_of_key_from_json_string);
-    
+    RUN_TEST(test_get_temperature);
+    RUN_TEST(test_connect_server_ipv6_udp);
+    RUN_TEST(test_connect_server_ipv6_tcp);
+    RUN_TEST(test_connect_server_ipv4_udp);
+    RUN_TEST(test_connect_server_ipv4_tcp);
+
+
     return UNITY_END();
 }
