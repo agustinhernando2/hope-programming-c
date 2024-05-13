@@ -13,7 +13,15 @@ runs:
           # ToDo: Add documentation about this command and describe better
           {
               cat $DOX_CONF_FILE
-              echo "INPUT" = $(pwd)/src $(pwd)/include $(pwd)/lib
+              echo "INPUT" = 
+              $(pwd)/server/src 
+              $(pwd)/server/include 
+              $(pwd)/client/src 
+              $(pwd)/client/include 
+              $(pwd)/lib/libsta/include
+              $(pwd)/lib/libsta/src
+              $(pwd)/lib/libsta/include
+              $(pwd)/lib/libsta/src
           } > $DOX_CONF_FILE
 
           # Generate documentation
