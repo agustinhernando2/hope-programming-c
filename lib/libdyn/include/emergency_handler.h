@@ -11,6 +11,7 @@
 #define SIZE_TIME 20
 #define K_EMERGENCY "emergency"
 #define LOG_E_FILE_PATH "data/emergency.log"
+#define JSON_FILE_PATH "data/state_summary.json"
 
 int run_emergency_handler(int* pipe_fd);
 

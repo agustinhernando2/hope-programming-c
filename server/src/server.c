@@ -11,39 +11,6 @@ int main()
     pid_t pid, pid_c;
     int child_process = 0;
 
-    // Fork Modulo de alerta
-    pid = fork();
-    if (pid == 0)
-    {
-        run_alert_module(msg_id);
-        exit(EXIT_SUCCESS);
-    }
-    else if (pid > 0)
-    {
-        child_process++;
-    }
-    else
-    {
-        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-
-    // Fork listener alert temperature
-    pid = fork();
-    if (pid == 0)
-    {
-        alert_and_emergency_listener(msg_id);
-        exit(EXIT_SUCCESS);
-    }
-    else if (pid > 0)
-    {
-        child_process++;
-    }
-    else
-    {
-        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
 
     // Fork server connection ipv4 TCP
     pid = fork();
@@ -101,6 +68,40 @@ int main()
     if (pid == 0)
     {
         run_server_ipv6(SOCK_DGRAM);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    
+    // Fork Modulo de alerta
+    pid = fork();
+    if (pid == 0)
+    {
+        run_alert_module(msg_id);
+        exit(EXIT_SUCCESS);
+    }
+    else if (pid > 0)
+    {
+        child_process++;
+    }
+    else
+    {
+        fprintf(stderr, "Error creating process 2. Errno: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork listener alert temperature
+    pid = fork();
+    if (pid == 0)
+    {
+        alert_and_emergency_listener(msg_id);
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)

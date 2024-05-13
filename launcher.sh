@@ -6,8 +6,8 @@ fi
 
 if [ "$1" = "debug" ]; then
     # Debug ex
-    #gnome-terminal --title="server - gdb" -- bash -c "gdb ./build/server/server -ex 'set follow-fork-mode parent' -ex 'br server.c:28' -ex 'run'; exec bash" &
-    gnome-terminal --title="server - gdb" -- bash -c "gdb ./build/server/server -ex 'run' -ex 'set follow-fork-mode child'; exec bash" &
+    gnome-terminal --title="server - gdb" -- bash -c "gdb ./build/server/server -ex 'set follow-fork-mode child' -ex 'br server.c:217' -ex 'run'; exec bash" &
+    # gnome-terminal --title="server - gdb" -- bash -c "gdb ./build/server/server -ex 'run' -ex 'set follow-fork-mode child'; exec bash" &
     sleep 1
     # gnome-terminal --title="client6 - gdb" -- bash -c "gdb ./build/client/client -ex 'set follow-fork-mode child' -ex 'br client.c:48' -ex 'run localhost 4'; exec bash" &
     gnome-terminal --title="client6 - gdb" -- bash -c "gdb ./build/client/client -ex 'run localhost 4'; exec bash" &
