@@ -39,7 +39,7 @@ int read_file(char* filename, char** buffer)
         return 1;
     }
     // Store the content of the file
-    char *string = malloc(fsize + 1);
+    char *string = malloc((size_t) fsize + 1);
     if (string == NULL) {
         fclose(file);
         fprintf(stderr, "%s:%d: Error allocating memory\n",__FILE__, __LINE__);
@@ -47,8 +47,8 @@ int read_file(char* filename, char** buffer)
     }
 
     // Read the file content
-    size_t bytesRead = fread(string, 1, fsize, file);
-    if (bytesRead != fsize) {
+    size_t bytesRead = fread(string, 1, (size_t) fsize, file);
+    if (bytesRead != (size_t) fsize) {
         fclose(file);
         free(string);
         fprintf(stderr, "%s:%d: Error reading file\n",__FILE__, __LINE__);
@@ -56,7 +56,7 @@ int read_file(char* filename, char** buffer)
     }
 
     // Add terminator
-    string[fsize] = '\0';
+    string[(size_t) fsize] = '\0';
     fclose(file);
     // Add return
     *buffer = string;
@@ -65,7 +65,7 @@ int read_file(char* filename, char** buffer)
 }
 int write_file(char* filename, char* buffer)
 {
-    if (buffer == NULL | strlen(buffer) == 0) {
+    if ( (buffer == NULL) | (strlen(buffer) == 0) ) {
         fprintf(stderr, "%s:%d: buffer error \n",__FILE__, __LINE__);
         return 0;
     }
@@ -121,7 +121,7 @@ int generate_log(char* filename, char* timestamp, char* message)
     return 0;
 }
 
-void set_timestamp(char* timestamp, int t_size)
+void set_timestamp(char* timestamp, size_t t_size)
 {
     time_t current_time;
     struct tm* time_info;

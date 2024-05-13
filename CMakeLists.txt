@@ -12,6 +12,9 @@ project(
 # Define the C standard, we are going to use std17
 set(CMAKE_C_STANDARD 17)
 
+# Flags de compilación
+set(CMAKE_C_FLAGS "-Wall -pedantic -Werror -Wextra -Wconversion -std=gnu11")
+
 # To automatically download the dependencies we can use FetchContent
 include(FetchContent)
 

@@ -23,13 +23,14 @@
 volatile sig_atomic_t flag_get_supply = 0;
 volatile sig_atomic_t skip_option = 1;
 
-uint16_t puerto;
+uint16_t puerto = 0;
 char send_socket_buffer[BUFFER_SIZE];
 char recv_socket_buffer[BUFFER_SIZE];
 struct sockaddr_in serv_addr;
 struct hostent *server;
-int sockfd;
-
+int sockfd = 0;
+int connection_type = 0;
+int ip_version = 0;
 
 char username[MAX_USERNAME_LENGTH];
 char password[MAX_PASSWORD_LENGTH];
@@ -39,9 +40,8 @@ char password[MAX_PASSWORD_LENGTH];
  *
  * Tries to establish a connection to the server. Returns 0 on success, 1 on error.
  *
- * @return 0 on success, 1 on error.
  */
-int try_connect_server(int type, const char* ip_address, int ipv);
+void try_connect_server(int type, int ipv);
 
 /**
  * @brief Sends a message to the server.

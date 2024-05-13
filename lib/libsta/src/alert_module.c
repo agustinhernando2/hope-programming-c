@@ -4,7 +4,7 @@
 double get_temperature()
 {
     // Simulate temperature
-    srand(time(NULL));
+    srand( (unsigned int)time(NULL));
     // return a number between MIN_TEMPERATURE and MAX_TEMPERATURE
     return ((rand()/10) % (MAX_TEMPERATURE - MIN_TEMPERATURE )) + MIN_TEMPERATURE;
 }

@@ -39,14 +39,14 @@ sem_t mutex_state;
  *
  * @param[in] type type udp/tcp.
  */
-void run_server_ipv4(int type, int ipv);
+void run_server_ipv4(int type);
 
 /**
  * @brief Runs the server using IPv6.
  *
  * @param[in] type type udp/tcp.
  */
-void run_server_ipv6(int type, int ipv);
+void run_server_ipv6(int type);
 
 /**
  * @brief Run the server.
@@ -60,13 +60,13 @@ void run_admin_server(int newsockfd);
  *
  * @param[in] newsockfd The socket file descriptor for the connection.
  */
-void run_normal_user_server(int newsockfd, int ipv);
+void run_normal_user_server(int newsockfd, struct sockaddr_storage* cli_addr);
 
 void end_conn(int newsockfd);
 
-void send_deneid_udp_message(int newsockfd, struct sockaddr_in cli_addr);
+void send_deneid_udp_message(int newsockfd, struct sockaddr_storage* cli_addr);
 
-void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr);
+void send_supply_udp(int newsockfd, struct sockaddr_storage* cli_addr);
 
 /**
  * @brief Modify and send the supply status to the client.

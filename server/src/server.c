@@ -1,6 +1,6 @@
 #include "server.h"
 
-int main(int argc, char* argv[])
+int main()
 {
     set_signal_handlers();
     create_message_queue();
@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
     pid_t pid, pid_c;
     int child_process = 0;
 
-    Fork Modulo de alerta
+    // Fork Modulo de alerta
     pid = fork();
     if (pid == 0)
     {
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     pid = fork();
     if (pid == 0)
     {
-        run_server_ipv4(SOCK_STREAM, AF_INET);
+        run_server_ipv4(SOCK_STREAM);
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     pid = fork();
     if (pid == 0)
     {
-        run_server_ipv4(SOCK_DGRAM, AF_INET);
+        run_server_ipv4(SOCK_DGRAM);
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     pid = fork();
     if (pid == 0)
     {
-        run_server_ipv6(SOCK_STREAM, AF_INET6);
+        run_server_ipv6(SOCK_STREAM);
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     pid = fork();
     if (pid == 0)
     {
-        run_server_ipv6(SOCK_DGRAM, AF_INET6);
+        run_server_ipv6(SOCK_DGRAM);
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)
@@ -156,10 +156,8 @@ int create_message_queue()
 
 void alert_and_emergency_listener(int msg_id)
 {
-    char* message = NULL;
     mess_t send_buffer;
 
-    int r = 0;
     while (TRUE)
     {
         if (msgrcv(msg_id, &send_buffer, sizeof(send_buffer), 1, 0) == -1)
@@ -172,10 +170,10 @@ void alert_and_emergency_listener(int msg_id)
     }
 }
 
-void run_server_ipv4(int type, int ipv)
+void run_server_ipv4(int type)
 {
     int clilen = 0, pid = 0;
-    struct sockaddr_in cli_addr;
+    struct sockaddr_storage cli_addr;
 
     if (connect_server_ipv4(&sockfd, type))
     {
@@ -237,17 +235,17 @@ void run_server_ipv4(int type, int ipv)
         }
         break;
     case SOCK_DGRAM:
-        run_normal_user_server(sockfd, ipv);
+        run_normal_user_server(sockfd, &cli_addr);
         break;
     default:
         break;
     }
 }
 
-void run_server_ipv6(int type, int ipv)
+void run_server_ipv6(int type)
 {
     int clilen = 0, pid = 0;
-    struct sockaddr_in6 cli_addr6;
+    struct sockaddr_storage cli_addr6;
 
     if (connect_server_ipv6(&sockfd, type))
     {
@@ -310,7 +308,7 @@ void run_server_ipv6(int type, int ipv)
         }
         break;
     case SOCK_DGRAM:
-        run_normal_user_server(sockfd, ipv);
+        run_normal_user_server(sockfd, &cli_addr6);
         break;
     default:
         break;
@@ -355,16 +353,14 @@ void run_admin_server(int newsockfd)
     }
 }
 
-void run_normal_user_server(int newsockfd, int ipv)
+void run_normal_user_server(int newsockfd, struct sockaddr_storage* cli_addr)
 {
-    struct sockaddr_in cli_addr;
-
     while (TRUE)
     {
         // wait a moment to start to get the messages
         sleep(2);
         memset(recv_socket_buffer, 0, BUFFER_SIZE);
-        if (recv_udp_message(newsockfd, recv_socket_buffer, &cli_addr))
+        if (recv_udp_message(newsockfd, recv_socket_buffer, cli_addr))
         {
             error_handler("Error recv_udp_message", __FILE__, __LINE__);
             exit(EXIT_FAILURE);
@@ -390,7 +386,7 @@ void run_normal_user_server(int newsockfd, int ipv)
     }
 }
 
-void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr)
+void send_supply_udp(int newsockfd, struct sockaddr_storage* cli_addr)
 {
     if (get_supply_status(&send_socket_buffer))
     {
@@ -398,7 +394,7 @@ void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr)
         exit(EXIT_FAILURE);
     }
 
-    if (send_udp_message(newsockfd, send_socket_buffer, cli_addr))
+    if (send_udp_message(newsockfd, send_socket_buffer, (struct sockaddr_storage*) cli_addr))
     {
         error_handler("Error send_message", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
@@ -407,7 +403,7 @@ void send_supply_udp(int newsockfd, struct sockaddr_in cli_addr)
     free_ptr(&send_socket_buffer);
 }
 
-void send_deneid_udp_message(int newsockfd, struct sockaddr_in cli_addr)
+void send_deneid_udp_message(int newsockfd, struct sockaddr_storage* cli_addr)
 {
     send_socket_buffer = (char*)malloc(BUFFER_SIZE);
     if (send_socket_buffer == NULL)
@@ -420,7 +416,7 @@ void send_deneid_udp_message(int newsockfd, struct sockaddr_in cli_addr)
         error_handler("Error json_add_key_value_to_json_string", __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
-    if (send_udp_message(newsockfd, send_socket_buffer, cli_addr))
+    if (send_udp_message(newsockfd, send_socket_buffer, (struct sockaddr_storage*) cli_addr))
     {
         free_ptr(&send_socket_buffer);
         error_handler("Error send_message", __FILE__, __LINE__);
@@ -444,6 +440,7 @@ void end_conn(int newsockfd)
         exit(EXIT_FAILURE);
     }
 
+    fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
     // Leer datos del pipe en el proceso padre
     ssize_t bytes_read = read(pipe_fd[0], buffer, sizeof(buffer));
     if (bytes_read == -1)
@@ -452,13 +449,14 @@ void end_conn(int newsockfd)
         // Si no hay datos disponibles para leer, continuar sin bloquear
         if (errno == EAGAIN || errno == EWOULDBLOCK)
         {
-            printf("No hay datos disponibles para leer en este momento.\n");
+            printf("No hay datos disponibles para leer en este momento, PID: %d.\n", getpid());
         }
         else
         {
             close(pipe_fd[0]);
-            close(newsockfd);
+            sleep(5);
             send_end_conn_message(newsockfd);
+            close(newsockfd);
             exit(EXIT_FAILURE);
         }
     }
@@ -469,7 +467,6 @@ void end_conn(int newsockfd)
 
     close(pipe_fd[0]); // Cerrar el extremo de lectura del pipe en el padre
 
-    fprintf(stdout, "Sending end connection, PID: %d.\n", getpid());
     send_end_conn_message(newsockfd);
     sleep(5);
     // close socket
@@ -661,12 +658,10 @@ int get_command()
 
 static void sign_handler(int signal)
 {
-    printf("Signal: %d\n", signal);
     switch (signal)
     {
     case SIGINT:
         /* out of the loop*/
-        printf("SIGINT called\n");
         flag_handler = 1;
         printf("\
             The server is not accepting any more connections.\

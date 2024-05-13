@@ -156,6 +156,8 @@ int connect_client_ipv6(int* sockfd, const char* ip_address, int type)
     else{
         port = PORT_IPV6_UDP;
     }
+    
+    memset(&serv_addr, 0, sizeof(serv_addr));
     struct sockaddr_in6* ipv6_addr = (struct sockaddr_in6*)&serv_addr;
     ipv6_addr->sin6_family = AF_INET6;
     ipv6_addr->sin6_port = htons(port);
@@ -177,7 +179,7 @@ int connect_client_ipv6(int* sockfd, const char* ip_address, int type)
     return 0;
 }
 
-int send_message(char* json_buffer, int b_size, int sockfd)
+int send_message(char* json_buffer, size_t b_size, int sockfd)
 {
     size_t slice = 0;
     char socket_buffer[BUFFER_SIZE];
@@ -207,7 +209,7 @@ int send_message(char* json_buffer, int b_size, int sockfd)
 }
 
 
-int send_message_to_socket(char* json_buffer, int b_size, int sockfd)
+int send_message_to_socket(char* json_buffer, size_t b_size, int sockfd)
 {
     if((b_size == 0)||(strlen(json_buffer) == 0))
     {
@@ -234,7 +236,7 @@ int recv_tcp_message(int sockfd, char* socket_buffer)
     return 0;
 }
 
-int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_in* cli_addr)
+int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_storage* cli_addr)
 {
     memset(socket_buffer, 0, BUFFER_SIZE);
     socklen_t clilen = sizeof(*cli_addr);
@@ -248,9 +250,9 @@ int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_in* cli_ad
     return 0;
 }
 
-int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_in cli_addr)
+int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_storage* cli_addr)
 {
-    if (sendto(newsockfd, send_socket_buffer, strlen(send_socket_buffer), 0, (struct sockaddr*)&cli_addr, sizeof(cli_addr)) == -1)
+    if (sendto(newsockfd, send_socket_buffer, strlen(send_socket_buffer), 0, (struct sockaddr*)cli_addr, sizeof(*cli_addr)) == -1)
     {
         fprintf(stderr, "%s:%d: Error sending the json_buffer content.\n", __FILE__, __LINE__);
         return 1;

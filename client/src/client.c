@@ -14,8 +14,6 @@ int main(int argc, char* argv[])
     server = gethostbyname(argv[1]);
 
     get_credentials();
-    
-    int connection_type;
 
     if(check_credentials()){
         // if the user is admin, the connection will be TCP
@@ -30,15 +28,10 @@ int main(int argc, char* argv[])
         skip_option = 0;
     }
 
-    int ip_version = atoi(argv[2]);
+    ip_version = atoi(argv[2]);
 
-    if (try_connect_server(connection_type, argv[1], ip_version))
-    {
-        error_handler("Error to connect",__FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-
-
+    try_connect_server(connection_type, ip_version);
+    
     while (TRUE)
     {
         if(skip_option == 1)
@@ -81,7 +74,7 @@ int check_credentials()
     return 0;
 }
 
-int try_connect_server(int type, const char* ip_address, int ipv)
+void try_connect_server(int type, int ipv)
 {
     switch (ipv)
     {
@@ -90,7 +83,6 @@ int try_connect_server(int type, const char* ip_address, int ipv)
         {
             error_handler("Error to connect to the server",__FILE__, __LINE__);
             exit(EXIT_FAILURE);
-            return 1;
         }
         break;
     case IPV6:
@@ -98,7 +90,6 @@ int try_connect_server(int type, const char* ip_address, int ipv)
         {
             error_handler("Error to connect to the server",__FILE__, __LINE__);
             exit(EXIT_FAILURE);
-            return 1;
         }
         break;
     default:

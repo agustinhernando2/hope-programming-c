@@ -47,4 +47,4 @@ int generate_log(char* filename, char* timestamp, char* message);
 /**
  * @brief Set the timestamp
 */
-void set_timestamp(char* timestamp, int t_size);
+void set_timestamp(char* timestamp, size_t t_size);

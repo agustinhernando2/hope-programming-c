@@ -109,7 +109,7 @@ int connect_client_ipv6(int* sockfd, const char* ip_address, int type);
  * @param sockfd: socket file descriptor.
  * @return 0 success, 1 if an error occurs.
  */
-int send_message(char *json_buffer, int b_size,int sockfd);
+int send_message(char *json_buffer, size_t b_size,int sockfd);
 
 /**
  * @brief - send a message through sockets
@@ -118,7 +118,7 @@ int send_message(char *json_buffer, int b_size,int sockfd);
  * @param sockfd: socket file descriptor.
  * @return 0 success, 1 if an error occurs.
  */
-int send_message_to_socket(char *json_buffer, int b_size, int sockfd);
+int send_message_to_socket(char *json_buffer, size_t b_size, int sockfd);
 
 /**
  * @brief - send a message through sockets
@@ -132,9 +132,9 @@ int recv_tcp_message(int sockfd, char *json_buffer);
 /**
  * @brief - send a message through sockets using UDP
 */
-int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_in* cli_addr);
+int recv_udp_message(int sockfd, char* socket_buffer, struct sockaddr_storage* cli_addr);
 
 /**
  * @brief - send a message through sockets using UDP
 */
-int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_in cli_addr);
+int send_udp_message(int newsockfd, char* send_socket_buffer, struct sockaddr_storage* cli_addr);

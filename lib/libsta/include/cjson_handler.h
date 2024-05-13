@@ -10,9 +10,9 @@
 #include <cJSON.h>
 #include <lib_handler.h>
 
-#define INTPARSE 0b010
-#define OBJPARSE 0b100
-#define OVERRIDE 0b001
+#define INTPARSE 4
+#define OBJPARSE 8
+#define OVERRIDE 1
 
 /**
  * @brief Print a JSON character buffer
