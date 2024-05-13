@@ -1,13 +1,13 @@
 #include <unity.h>
 #include <cjson_handler.h>
-#include <r_w_handler.h>
+#include <lib_handler.h>
 
 void test_cjson_add_key_value_to_json_string(){
     char cjson_buffer[50];
     char key[] = "key";
     char value[] = "value";
 
-    TEST_ASSERT_EQUAL(0, cjson_add_key_value_to_json_string(cjson_buffer, key, value));
+    TEST_ASSERT_EQUAL(0, cjson_add_key_value_to_json_string(cjson_buffer, key, value, OVERRIDE));
     TEST_ASSERT_EQUAL_STRING("{\n\t\"key\":\t\"value\"\n}", cjson_buffer);
 
 }
@@ -17,7 +17,7 @@ void test_cjson_add_key_object_to_json_string(){
     char key[] = "key";
     char cjson_buffer_value[] = "{\"key\":\"value\"}";
     
-    TEST_ASSERT_EQUAL(0, cjson_add_key_object_to_json_string(cjson_buffer, key, cjson_buffer_value));
+    TEST_ASSERT_EQUAL(0, cjson_add_key_value_to_json_string(cjson_buffer, key, cjson_buffer_value, OVERRIDE|OBJPARSE));
     TEST_ASSERT_EQUAL_STRING("{\n\t\"key\":\t{\n\t\t\"key\":\t\"value\"\n\t}\n}", cjson_buffer);
 }
 
@@ -27,43 +27,8 @@ void test_cjson_add_key_object_to_json_string_2(){
     char cjson_buffer[500]="{\"key_root1\":\"value\",\"key_root2\":\"value\"}";
     char cjson_buffer_value[] = "{\"key1\":\"value\",\"key2\":\"value\"}";
     
-    TEST_ASSERT_EQUAL(0, cjson_add_key_object_to_json_string(cjson_buffer, key, cjson_buffer_value));
+    TEST_ASSERT_EQUAL(0, cjson_add_key_value_to_json_string(cjson_buffer, key, cjson_buffer_value, OVERRIDE|OBJPARSE));
     TEST_ASSERT_EQUAL_STRING("{\n\t\"key_root1\":\t\"value\",\n\t\"key_root2\":\t\"value\",\n\t\"key_added\":\t{\n\t\t\"key1\":\t\"value\",\n\t\t\"key2\":\t\"value\"\n\t}\n}", cjson_buffer);
-}
-void test_merge_json_strings()
-{
-    char json_string1[] = "{\"key1\":\"value1\"}";
-    char json_string2[] = "{\"key2\":\"value2\"}";
-    char merged_json[100];
-
-    int result = merge_json_strings(json_string1, json_string2, merged_json);
-
-    TEST_ASSERT_EQUAL(0, result);
-    TEST_ASSERT_EQUAL_STRING("{\n\t\"key1\":\t\"value1\",\n\t\"key2\":\t\"value2\"\n}", merged_json);
-}
-
-void test_merge_json_strings_1()
-{
-    char json_string1[] = "{\"key1\":\"value1\"}";
-    char json_string2[] = "{}";
-    char merged_json[100];
-
-    int result = merge_json_strings(json_string1, json_string2, merged_json);
-
-    TEST_ASSERT_EQUAL(0, result);
-    TEST_ASSERT_EQUAL_STRING("{\n\t\"key1\":\t\"value1\"\n}", merged_json);
-}
-
-void test_merge_json_strings_2()
-{
-    char json_string1[] = "{\"key1\":\"value1\"}";
-    char json_string2[] = "{\"key1\":\"value2\"}";
-    char merged_json[100];
-
-    int result = merge_json_strings(json_string1, json_string2, merged_json);
-
-    TEST_ASSERT_EQUAL(0, result);
-    TEST_ASSERT_EQUAL_STRING("{\n\t\"key1\":\t\"value2\"\n}", merged_json);
 }
 
 void test_is_key_in_json_object()
@@ -92,7 +57,6 @@ void test_get_value_of_key_from_json_string()
     char cjson_buffer[] = "{\"key1\":\"value1\",\"key2\":{\"nested_key\":\"nested_value\"}}";
     char key1[] = "key1";
     char key2[] = "key2";
-    char nested_key[] = "nested_key";
     char* ptr_buffer = NULL;
 
     // Test getting a value from the top-level key
@@ -136,9 +100,6 @@ int main()
     RUN_TEST(test_cjson_add_key_object_to_json_string);
     RUN_TEST(test_cjson_add_key_value_to_json_string);
     RUN_TEST(test_cjson_add_key_object_to_json_string_2);
-    RUN_TEST(test_merge_json_strings);
-    RUN_TEST(test_merge_json_strings_1);
-    RUN_TEST(test_merge_json_strings_2);
     RUN_TEST(test_is_key_in_json_object);
     RUN_TEST(test_get_value_of_key_from_json_string);
     

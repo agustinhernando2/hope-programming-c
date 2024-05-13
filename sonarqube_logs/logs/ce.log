@@ -68,3 +68,9 @@
 2024.05.12 19:34:54 INFO  ce[AY9u8cHPGVPSdDoB-nxK][o.s.c.t.s.ComputationStepExecutor] Trigger refresh of Portfolios and Applications | status=SUCCESS | time=0ms
 2024.05.12 19:34:54 INFO  ce[AY9u8cHPGVPSdDoB-nxK][o.s.c.t.p.a.p.PostProjectAnalysisTasksExecutor] Webhooks | globalWebhooks=0 | projectWebhooks=0 | status=SUCCESS | time=12ms
 2024.05.12 19:34:54 INFO  ce[AY9u8cHPGVPSdDoB-nxK][o.s.c.t.CeWorkerImpl] Executed task | project=monitoringApplication | type=REPORT | id=AY9u8cHPGVPSdDoB-nxK | submitter=admin | status=SUCCESS | time=3555ms
+2024.05.12 22:12:52 INFO  ce[][o.s.p.ProcessEntryPoint] Gracefully stopping process
+2024.05.12 22:12:52 INFO  ce[][o.s.ce.app.CeServer] Compute Engine is stopping...
+2024.05.12 22:12:52 INFO  ce[][o.s.c.t.CeProcessingSchedulerImpl] Gracefully stopping workers...
+2024.05.12 22:12:52 INFO  ce[][c.z.h.HikariDataSource] HikariPool-1 - Shutdown initiated...
+2024.05.12 22:12:52 INFO  ce[][c.z.h.HikariDataSource] HikariPool-1 - Shutdown completed.
+2024.05.12 22:12:52 INFO  ce[][o.s.ce.app.CeServer] Compute Engine is stopped

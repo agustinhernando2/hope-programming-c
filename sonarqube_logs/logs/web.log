@@ -1149,3 +1149,8 @@
 2024.05.12 19:39:57 INFO  web[AY9u57+18Qy3yDoMAADa][o.s.u.c.UpdateCenter] The plugin 'vbnet' version : 8.46.0.54807 has not been found on the update center.
 2024.05.12 19:39:57 INFO  web[AY9u57+18Qy3yDoMAADa][o.s.u.c.UpdateCenter] The plugin 'web' version : 3.6.0.3106 has not been found on the update center.
 2024.05.12 19:39:57 INFO  web[AY9u57+18Qy3yDoMAADa][o.s.u.c.UpdateCenter] The plugin 'xml' version : 2.6.1.3686 has not been found on the update center.
+2024.05.12 22:12:52 INFO  web[][o.s.p.ProcessEntryPoint] Gracefully stopping process
+2024.05.12 22:12:52 INFO  web[][o.s.s.n.NotificationDaemon] Notification service stopped
+2024.05.12 22:12:52 INFO  web[][c.z.h.HikariDataSource] HikariPool-1 - Shutdown initiated...
+2024.05.12 22:12:52 INFO  web[][c.z.h.HikariDataSource] HikariPool-1 - Shutdown completed.
+2024.05.12 22:12:52 INFO  web[][o.s.s.app.WebServer] Web Server stopped

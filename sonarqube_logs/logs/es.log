@@ -13525,3 +13525,250 @@ bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [6
 2024.05.12 19:23:40 INFO  es[][o.e.n.Node] started
 2024.05.12 19:23:40 INFO  es[][o.e.g.GatewayService] recovered [7] indices into cluster_state
 2024.05.12 19:23:40 INFO  es[][o.e.c.r.a.AllocationService] Cluster health status changed from [RED] to [GREEN] (reason: [shards started [[metadatas][0]]]).
+2024.05.12 22:12:52 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:12:52 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:12:52 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:12:52 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:13:24 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:13:24 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:13:24 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:13:24 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:13:24 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:13:24 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:13:24 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:13:24 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:13:24 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:13:24 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.4gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:13:24 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:13:24 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:13:26 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:13:26 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:13:26 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:13:27 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:13:27 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:13:27 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:13:27 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:39403}, bound_addresses {127.0.0.1:39403}
+2024.05.12 22:13:27 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:13:27 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:13:27 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:13:27 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:13:27 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:13:27 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:13:29 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:13:29 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:13:29 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:13:29 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:13:29 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:13:29 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:13:29 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:13:29 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:13:29 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:13:30 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.4gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:13:30 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:13:30 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:13:31 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:13:31 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:13:32 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:13:32 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:13:32 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:13:32 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:13:32 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:44851}, bound_addresses {127.0.0.1:44851}
+2024.05.12 22:13:32 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:13:32 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:13:32 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:13:32 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:13:32 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:13:32 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:13:35 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:13:35 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:13:35 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:13:35 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:13:35 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:13:35 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:13:35 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:13:35 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:13:35 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:13:35 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.4gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:13:35 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:13:35 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:13:37 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:13:37 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:13:37 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:13:37 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:13:37 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:13:37 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:13:37 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:33593}, bound_addresses {127.0.0.1:33593}
+2024.05.12 22:13:38 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:13:38 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:13:38 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:13:38 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:13:38 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:13:38 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:13:40 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:13:40 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:13:40 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:13:40 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:13:40 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:13:40 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:13:40 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:13:40 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:13:40 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:13:40 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.4gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:13:40 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:13:41 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:13:43 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:13:43 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:13:43 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:13:43 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:13:43 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:13:43 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:13:43 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:41279}, bound_addresses {127.0.0.1:41279}
+2024.05.12 22:13:43 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:13:43 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:13:43 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:13:43 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:13:43 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:13:43 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:13:46 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:13:46 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:13:46 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:13:47 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:13:47 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:13:47 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:13:47 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:13:47 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:13:47 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:13:47 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.7gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:13:47 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:13:47 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:13:50 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:13:50 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:13:50 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:13:50 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:13:50 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:13:50 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:13:50 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:37249}, bound_addresses {127.0.0.1:37249}
+2024.05.12 22:13:50 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:13:50 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:13:50 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:13:50 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:13:50 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:13:50 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:13:54 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:13:54 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:13:54 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:13:54 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:13:54 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:13:54 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:13:54 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:13:54 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:13:54 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:13:54 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.7gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:13:54 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:13:55 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:13:57 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:13:57 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:13:57 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:13:57 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:13:57 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:13:57 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:13:58 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:33359}, bound_addresses {127.0.0.1:33359}
+2024.05.12 22:13:58 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:13:58 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:13:58 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:13:58 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:13:58 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:13:58 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:14:03 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:14:03 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:14:03 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:14:03 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:14:03 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:14:03 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:14:03 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:14:03 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:14:03 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:14:03 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.7gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:14:03 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:14:04 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:14:06 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:14:06 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:14:06 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:14:06 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:14:06 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:14:06 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:14:06 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:44267}, bound_addresses {127.0.0.1:44267}
+2024.05.12 22:14:06 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:14:06 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:14:06 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:14:06 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:14:06 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:14:06 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:14:15 INFO  es[][o.e.n.Node] version[7.17.5], pid[37], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:14:15 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:14:15 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:14:15 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:14:15 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:14:15 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:14:15 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:14:15 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:14:15 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:14:15 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.6gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:14:15 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:14:15 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:14:17 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:14:17 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:14:17 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:14:17 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:14:18 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:14:18 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:14:18 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:39437}, bound_addresses {127.0.0.1:39437}
+2024.05.12 22:14:18 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:14:18 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:14:18 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:14:18 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:14:18 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:14:18 INFO  es[][o.e.n.Node] closed
+2024.05.12 22:14:33 INFO  es[][o.e.n.Node] version[7.17.5], pid[38], build[default/tar/8d61b4f7ddf931f219e3745f295ed2bbc50c8e84/2022-06-23T21:57:28.736740635Z], OS[Linux/6.5.0-28-generic/amd64], JVM[Alpine/OpenJDK 64-Bit Server VM/11.0.15/11.0.15+10-alpine-r0]
+2024.05.12 22:14:33 INFO  es[][o.e.n.Node] JVM home [/usr/lib/jvm/java-11-openjdk]
+2024.05.12 22:14:33 INFO  es[][o.e.n.Node] JVM arguments [-XX:+UseG1GC, -Djava.io.tmpdir=/opt/sonarqube/temp, -XX:ErrorFile=../logs/es_hs_err_pid%p.log, -Des.networkaddress.cache.ttl=60, -Des.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -Djna.tmpdir=/opt/sonarqube/temp, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Dlog4j2.formatMsgNoLookups=true, -Djava.locale.providers=COMPAT, -Dcom.redhat.fips=false, -Des.enforce.bootstrap.checks=true, -Xmx512m, -Xms512m, -XX:MaxDirectMemorySize=256m, -XX:+HeapDumpOnOutOfMemoryError, -Des.path.home=/opt/sonarqube/elasticsearch, -Des.path.conf=/opt/sonarqube/temp/conf/es, -Des.distribution.flavor=default, -Des.distribution.type=tar, -Des.bundled_jdk=false]
+2024.05.12 22:14:33 INFO  es[][o.e.p.PluginsService] loaded module [analysis-common]
+2024.05.12 22:14:33 INFO  es[][o.e.p.PluginsService] loaded module [lang-painless]
+2024.05.12 22:14:33 INFO  es[][o.e.p.PluginsService] loaded module [parent-join]
+2024.05.12 22:14:33 INFO  es[][o.e.p.PluginsService] loaded module [reindex]
+2024.05.12 22:14:33 INFO  es[][o.e.p.PluginsService] loaded module [transport-netty4]
+2024.05.12 22:14:33 INFO  es[][o.e.p.PluginsService] no plugins loaded
+2024.05.12 22:14:33 INFO  es[][o.e.e.NodeEnvironment] using [1] data paths, mounts [[/opt/sonarqube/data (/dev/nvme0n1p6)]], net usable_space [64.6gb], net total_space [129.3gb], types [ext4]
+2024.05.12 22:14:33 INFO  es[][o.e.e.NodeEnvironment] heap size [512mb], compressed ordinary object pointers [true]
+2024.05.12 22:14:33 INFO  es[][o.e.n.Node] node name [sonarqube], node ID [75t1LEVFTCqcxRjR75reJA], cluster name [sonarqube], roles [data_frozen, master, remote_cluster_client, data, data_content, data_hot, data_warm, data_cold, ingest]
+2024.05.12 22:14:35 INFO  es[][o.e.t.NettyAllocator] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={es.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=512mb}]
+2024.05.12 22:14:35 INFO  es[][o.e.i.r.RecoverySettings] using rate limit [40mb] with [default=40mb, read=0b, write=0b, max=0b]
+2024.05.12 22:14:35 INFO  es[][o.e.d.DiscoveryModule] using discovery type [zen] and seed hosts providers [settings]
+2024.05.12 22:14:35 INFO  es[][o.e.g.DanglingIndicesState] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+2024.05.12 22:14:35 INFO  es[][o.e.n.Node] initialized
+2024.05.12 22:14:35 INFO  es[][o.e.n.Node] starting ...
+2024.05.12 22:14:35 INFO  es[][o.e.t.TransportService] publish_address {127.0.0.1:39801}, bound_addresses {127.0.0.1:39801}
+2024.05.12 22:14:36 INFO  es[][o.e.b.BootstrapChecks] explicitly enforcing bootstrap checks
+2024.05.12 22:14:36 ERROR es[][o.e.b.Bootstrap] node validation exception
+[1] bootstrap checks failed. You must address the points described in the following [1] lines before starting Elasticsearch.
+bootstrap check failure [1] of [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+2024.05.12 22:14:36 INFO  es[][o.e.n.Node] stopping ...
+2024.05.12 22:14:36 INFO  es[][o.e.n.Node] stopped
+2024.05.12 22:14:36 INFO  es[][o.e.n.Node] closing ...
+2024.05.12 22:14:36 INFO  es[][o.e.n.Node] closed
