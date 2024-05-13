@@ -7,7 +7,7 @@ runs:
       - name: Compile
         shell: bash
         run: |
-          SRC_FOLDER=$(pwd)/src
+          SRC_FOLDER=$(pwd)
 
           mkdir -p build && cd build
           cmake -DSRC_FOLDER=${SRC_FOLDER} -DRUN_COVERAGE=1 -DRUN_TESTS=1 .. && make -j2
