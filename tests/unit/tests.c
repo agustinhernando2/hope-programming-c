@@ -1,6 +1,7 @@
 #include <unity.h>
 #include <cjson_handler.h>
 #include <lib_handler.h>
+#include <supplies_data_handler.h>
 
 void test_cjson_add_key_value_to_json_string(){
     char cjson_buffer[50];
@@ -79,6 +80,27 @@ void test_get_value_of_key_from_json_string()
     free_ptr(&ptr_buffer);
 }
 
+void test_free_ptr()
+{
+    char* buffer = malloc(10);
+    free_ptr(&buffer);
+    TEST_ASSERT_NULL(buffer);
+}
+
+void test_read_file()
+{
+    char* buffer = NULL;
+    TEST_ASSERT_EQUAL_INT(0, read_file("Testing/Temporary/test.txt", &buffer));
+    TEST_ASSERT_NOT_NULL(buffer);
+    free_ptr(&buffer);
+}
+
+void test_write_file()
+{
+    char* buffer = "Hello World!";
+    TEST_ASSERT_EQUAL_INT(0, write_file("Testing/Temporary/test.txt", buffer));
+}
+
 
 /**
  * @brief run at the end of tests.
@@ -97,6 +119,10 @@ void tearDown(void)
 int main()
 {
     UNITY_BEGIN();
+
+    RUN_TEST(test_free_ptr);
+    RUN_TEST(test_write_file);
+    RUN_TEST(test_read_file);
     RUN_TEST(test_cjson_add_key_object_to_json_string);
     RUN_TEST(test_cjson_add_key_value_to_json_string);
     RUN_TEST(test_cjson_add_key_object_to_json_string_2);

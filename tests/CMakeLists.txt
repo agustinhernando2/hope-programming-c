@@ -13,8 +13,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/include)
 file(GLOB TESTS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/unit/*.c)
 
 # Files to test
-file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/cjson_handler.c
- 					${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/lib_handler.c)
+file(GLOB SRC_FILES 
+${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/cjson_handler.c
+${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/lib_handler.c
+${CMAKE_CURRENT_SOURCE_DIR}/../lib/libsta/src/supplies_data_handler.c)
 
 # Link with Unity header
 # target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/nity/src)
