@@ -84,7 +84,7 @@ int main()
     pid = fork();
     if (pid == 0)
     {
-        run_alert_module(msg_id);
+        run_alert_module();
         exit(EXIT_SUCCESS);
     }
     else if (pid > 0)

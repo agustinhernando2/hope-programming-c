@@ -49,6 +49,7 @@ add_subdirectory(external)
 # Add tests if enabled
 if(RUN_TESTS EQUAL 1 OR RUN_COVERAGE EQUAL 1)
   include(CTest)
+  enable_testing()
   add_subdirectory(tests)
 endif()
 

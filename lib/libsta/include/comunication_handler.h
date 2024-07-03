@@ -27,7 +27,7 @@
 #define MAX_USERNAME_LENGTH 50
 #define MAX_PASSWORD_LENGTH 50
 #define MAX_K_V_SUP_LENGHT 50
-#define ADMIN "u"
+#define ADMIN "ubuntu"
 
 #define SUP_OPT1 "1"
 #define SUP_OPT1_EQ "food"
