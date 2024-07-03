@@ -15,7 +15,7 @@
 		}
 	},
 	"emergency":	{
-		"last_keepalived":	"Sun May 12 22:18:48",
-		"last_event":	"Sun May 12 22:18:48, Server failure. Emergency notification sent to all connected clients."
+		"last_keepalived":	"Wed Jul 03 15:13:05",
+		"last_event":	"Wed Jul 03 15:13:05, Server failure. Emergency notification sent to all connected clients."
 	}
 }

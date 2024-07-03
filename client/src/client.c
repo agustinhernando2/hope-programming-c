@@ -236,8 +236,19 @@ void get_supplies_options()
     scanf("%s", key);
     cjson_add_key_value_to_json_string(send_socket_buffer, K_KEY, key, OVERRIDE);
 
-    printf("Write the amount:\n");
-    scanf("%d", &value);
+    do
+    {
+        flag = 0;
+        printf("Write the amount:\n");
+        scanf("%d", &value);
+        // chek if amount is gt 0
+        if (value <= 0)
+        {
+            printf("Invalid amount. Please enter a valid number.\n");
+            flag = 1;
+        }
+    } while (flag);
+    
     char value_str[10];
     sprintf(value_str, "%d", value);
     cjson_add_key_value_to_json_string(send_socket_buffer, K_VALUE, value_str, OVERRIDE);

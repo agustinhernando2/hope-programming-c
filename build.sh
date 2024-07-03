@@ -28,7 +28,7 @@ mkdir build && cd build
 
 # Configura el proyecto usando CMake con el generador Ninja
 if [ "$1" == "test" ]; then
-    cmake -GNinja -DRUN_COVERAGE=1 -DRUN_TESTS=1 ..
+    cmake -GNinja -DRUN_COVERAGE=1 -DRUN_TESTS=1 -DCMAKE_BUILD_TYPE=Release ..
     ninja
     ctest --test-dir tests -VV 
 elif [ "$1" == "debug" ]; then
