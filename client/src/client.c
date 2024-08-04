@@ -248,7 +248,7 @@ void get_supplies_options()
             flag = 1;
         }
     } while (flag);
-    
+
     char value_str[10];
     sprintf(value_str, "%d", value);
     cjson_add_key_value_to_json_string(send_socket_buffer, K_VALUE, value_str, OVERRIDE);

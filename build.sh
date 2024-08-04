@@ -38,3 +38,16 @@ else
     cmake -GNinja ..
     ninja
 fi
+
+
+# Encuentra todos los archivos de texto (puedes ajustar la extensión según sea necesario)
+find $PROJECT_PATH -type f -name "*.txt" -o -name "*.md" -o -name "*.c" -o -name "*.h" -o -name "*.cpp" -o -name "*.hpp" -o -name "*.sh" | while read file; do
+  # Comprueba si el archivo no termina con una nueva línea
+  if [ "$(tail -c1 "$file" | wc -l)" -ne 1 ]; then
+    # Añade una nueva línea al final del archivo
+    echo >> "$file"
+    echo "Added newline to the end of: $file"
+  fi
+done
+
+exit 0
