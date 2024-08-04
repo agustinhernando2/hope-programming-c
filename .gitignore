@@ -13,7 +13,8 @@
 /build/
 
 # External directoy
-/external/
+/external/cJSON
+/external/unity
 
 # Dependency files
 *.d
@@ -24,3 +25,17 @@
 
 # Dont track sonnar files
 .scannerwork/
+
+# Sonar files 
+qa_local.sh
+CDashSummary.log
+docker-compose.yaml
+postgresql_data/postgresql/pgdata/
+sonarqube_data
+.gdb_history
+sonarqube_extensions
+sonarqube_logs
+data/temperature.log
+data/emergency.log
+data/test.txt
+

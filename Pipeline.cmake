@@ -1,8 +1,8 @@
 # Environment configuration
 
-set(CTEST_PROJECT_NAME "UNC-SOII") #Change here and insert the correct project name.
+set(CTEST_PROJECT_NAME "monitoringAplication") #Change here and insert the correct project name.
 set(CTEST_SUBMIT_URL 
-    "http://localhost:8080/submit.php?project=${CTEST_PROJECT_NAME}")
+    "http://localhost:9000/submit.php?project=${CTEST_PROJECT_NAME}")
 set(CTEST_USE_LAUNCHERS YES)
 
 # General settings
@@ -15,8 +15,9 @@ set(CTEST_BINARY_DIRECTORY "${CTEST_SCRIPT_DIRECTORY}/build")
 set(CTEST_CMAKE_GENERATOR Ninja)
 set(CTEST_CONFIGURATION_TYPE Debug)
 set(configureOpts
-    "-DRUN_COVERAGE=1"
-    )
+"-DRUN_COVERAGE=1"
+"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+)
 
 # Coverage settings
 set(CTEST_COVERAGE_COMMAND gcov)
@@ -26,7 +27,7 @@ find_program(CTEST_MEMORYCHECK_COMMAND valgrind)
 set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
 
 # Step 1 - Clean previous pipeline run
-#ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
 
 # Step 2 - Configure
 ctest_start(Experimental)
