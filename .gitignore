@@ -31,8 +31,11 @@ qa_local.sh
 CDashSummary.log
 docker-compose.yaml
 postgresql_data/postgresql/pgdata/
-data/temperature.log
 sonarqube_data
 .gdb_history
 sonarqube_extensions
 sonarqube_logs
+data/temperature.log
+data/emergency.log
+data/test.txt
+
